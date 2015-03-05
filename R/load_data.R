@@ -1,6 +1,9 @@
 ## Code to load data for ROA
 #reads datafiles parse into dataframes and loads into sqlite DB
 
+## TODO
+# function for parsing input filenames to get accession information
+
 # initiating database
 #' Initiates sqlite database for storing pepr pipeline output data.
 #'
@@ -30,13 +33,7 @@ init_peprDB <- function(data_dir = NULL, db_path = NULL, create = TRUE){
 #' load_peprMeta("/path/to/metadata.yaml", pepr_con)
 load_peprMeta <- function(metadata, db_con){
     yList <-  yaml::yaml.load_file(metadata)
-# need to figure out what to do with general metadata ....
-#     metadf <- dplyr::data_frame()
-#     for( i in yList){
-#         if(length(i) == 1)
-#            print(i)
-#     }
-
+    # need to figure out what to do with general metadata ....
     ydf <- dplyr::data_frame()
     for(i in 1:length(yList[["exp_design"]])){
         subList <- yList[["exp_design"]][[i]]
@@ -48,6 +45,7 @@ load_peprMeta <- function(metadata, db_con){
     dplyr::copy_to(dest = db_con,df = ydf,name = "exp_design")
 }
 
+#### Summary of sequencing datasets ####
 # parse stats file names
 parse_stat_name <- function(file_name){
     name_split <- stringr::str_split(file_name,pattern = "/")[[1]]
@@ -84,16 +82,34 @@ load_metrics <- function(metrics_dir, db_con){
         dplyr::copy_to(dest = db_con,df = met_df_list[[i]],name = i)
     }
 }
+## TODO - loading fastqc results
 
 #### Purity ####
 # pathoscope output
+load_purity <- function(purity_dir, db_con){
+    # need to test with pathoscope files ....
+    purity_df <- plyr::ldply(list.files(purity_dir,pattern = "*sam-report.tsv",
+                                  full.names = TRUE),
+                       parse_sam_report)
+    dplyr::copy_to(dest = db_con,df = purity_df,name = "purity")
+}
+
+
 
 #### Genome Assembly #####
 # pilon changes
 # pilon vcf
+# pilon wig files
 
 ##### Base level analysis ####
 #load full genome vcf
+load_consensus <- function(con_base_dir, ref, db_con){
+    # need to test ...
+    vcf_dir_list <- list.files(con_base_dir,full.names = TRUE)
+    purrr::each(.x= vcf_dir_list,.f = process_vcf_purity, ref = ref, db_con = db_con)
+}
 
 #### Homogeneity ####
 #load varscan results
+# varscan-indel
+# varscan_snp

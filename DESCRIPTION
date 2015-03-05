@@ -10,5 +10,6 @@ Imports: dplyr,
     tidyr,
     knitr,
     stringr,
-    purrr
+    purrr,
+    VariantAnnotation
 Suggests: testthat
