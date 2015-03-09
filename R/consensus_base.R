@@ -39,7 +39,7 @@ process_vcf_purity <- function (vcf_file, ref, db_conn){
     PUR_Q97.5 <- sapply(VariantAnnotation::info(vcf)$I16,FUN=calc_quantile, p = 0.975)
     #
     #generate datatable
-    vcf_tbl <- data.table::data.table(CHROM = str_sub(string = rownames(info(vcf)),
+    vcf_tbl <- data.table::data.table(CHROM = stringr::str_sub(string = rownames(info(vcf)),
                                           start = 1,end = 8),
                           POS = VariantAnnotation::ranges(vcf)@start, WIDTH = VariantAnnotation::ranges(vcf)@width,
                           INDEL=VariantAnnotation::info(vcf)$INDEL, DP = VariantAnnotation::info(vcf)$DP,
