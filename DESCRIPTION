@@ -11,5 +11,7 @@ Imports: dplyr,
     knitr,
     stringr,
     purrr,
-    VariantAnnotation
+    VariantAnnotation,
+    magrittr,
+    data.table
 Suggests: testthat

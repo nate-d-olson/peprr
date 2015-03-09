@@ -29,7 +29,7 @@ init_peprDB <- function(data_dir = NULL, db_path = NULL, create = TRUE){
 #' Loads metadata file from pepr pipeline into database
 #' @param metadata yaml file with pipeline metadata
 #' @param db_con optional path to initiate the database
-#' @return
+#' @return database
 #' @examples
 #' load_peprMeta("/path/to/metadata.yaml", pepr_con)
 load_peprMeta <- function(metadata, db_con){
