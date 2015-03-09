@@ -11,7 +11,10 @@ setClass("FastQC",
              Per_base_N_content="data.frame",
              Sequence_Length_Distribution="data.frame",
              Sequence_Duplication_Levels="data.frame",
-             Overrepresented_sequences="data.frame"
+             Overrepresented_sequences="data.frame",
+             # added by NDO for new fastqc output statistics
+             Adapter_Content="data.frame",
+             Kmer_Content="data.frame"
          )
 )
 
@@ -28,6 +31,8 @@ setGeneric("Sequence_Duplication_Levels", function(x, ...) {standardGeneric("Seq
 setGeneric("Overrepresented_sequences", function(x, ...) {standardGeneric("Overrepresented_sequences")})
 setGeneric("Mismatches", function(x, ...) {standardGeneric("Mismatches")})
 setGeneric("MismatchTable", function(x, ...) {standardGeneric("MismatchTable")})
+setGeneric("Adapter_Content", function(x, ...) {standardGeneric("Adapter_Content")})
+setGeneric("Kmer_Content", function(x, ...) {standardGeneric("Kmer_Content")})
 
 setMethod("show", "FastQC",
           function(object) {
@@ -35,6 +40,7 @@ setMethod("show", "FastQC",
               cat(slotNames(object), sep="\n")
           }
 )
+
 
 #Accessors
 setMethod("Basic_Statistics", "FastQC", function(x) x@Basic_Statistics)
@@ -47,6 +53,11 @@ setMethod("Per_base_N_content", "FastQC", function(x) x@Per_base_N_content)
 setMethod("Sequence_Length_Distribution", "FastQC", function(x) x@Sequence_Length_Distribution)
 setMethod("Sequence_Duplication_Levels", "FastQC", function(x) x@Sequence_Duplication_Levels)
 setMethod("Overrepresented_sequences", "FastQC", function(x) x@Overrepresented_sequences)
+setMethod("Sequence_Duplication_Levels", "FastQC", function(x) x@Sequence_Duplication_Levels)
+setMethod("Overrepresented_sequences", "FastQC", function(x) x@Overrepresented_sequences)
+setMethod("Adapter_Content", "FastQC", function(x) x@Adapter_Content)
+setMethod("Kmer_Content", "FastQC", function(x) x@Kmer_Content)
+
 
 readFastQC <- function(filename) {
     if (length(filename)!=1) stop("Length of filename must be 1")
