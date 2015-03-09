@@ -16,6 +16,7 @@
 #' init_peprDB("/path/to/PEPR-DATA")
 #' init_peprDB("/path/to/PEPR-DATA","/path/to/peprDB.sqlite")
 init_peprDB <- function(data_dir = NULL, db_path = NULL, create = TRUE){
+    # not working when only supplied db_path
     if(is.null(db_path)){
         db_path <- stringr::str_c(data_dir, "peprDB.sqlite", sep = "/")
     }else if(is.null(data_dir)){
@@ -82,7 +83,33 @@ load_metrics <- function(metrics_dir, db_con){
         dplyr::copy_to(dest = db_con,df = met_df_list[[i]],name = i)
     }
 }
-## TODO - loading fastqc results
+
+#extract dataset name from file name
+.get_dataset_name <- function(fastqc_data_file){
+    split_dir_fqc <- stringr::str_split(fastqc_data_file,pattern = "/")[[1]]
+    fqc_name <- grep(pattern = "*_fastqc", x= split_dir_fqc, value = TRUE) %>%
+        stringr::str_replace(pattern = "_fastqc",replacement = "") %>%
+        stringr::str_replace(pattern = "_1",replacement = "")
+}
+
+## loading fastqc results
+load_fastqc <- function(metrics_dir, db_con){
+    # parsing and loading fastq summary metrics files into db
+    metrics_files <- list.files(metrics_dir,"fastqc_data.txt",full.names = TRUE,recursive = TRUE)
+
+    # create a named list of fastqc class objects
+    metrics_files <- list.files(metrics_dir,"fastqc_data.txt",full.names = TRUE,recursive = TRUE)
+    read_fastqc <- plyr::llply(metrics_files, readFastQC)
+    names(read_fastqc) <-  plyr::llply(metrics_files, .get_dataset_name)
+
+    for(i in c("Per_base_sequence_quality",
+               "Per_sequence_quality_scores",
+               "Sequence_Length_Distribution")){
+        df <- plyr::ldply(read_fastqc,i) %>%
+            dplyr::rename(accession=.id)
+        dplyr::copy_to(dest = db_con,df = df,name = i)
+    }
+}
 
 #### Purity ####
 # pathoscope output
