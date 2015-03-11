@@ -23,7 +23,9 @@ process_vcf_purity <- function (vcf_file, ref, db_conn){
     #read vcf
     vcf <- VariantAnnotation::readVcf(vcf_file, geno=ref)
 
-    dataset_name <- stringr::str_replace(vcf_file, ".vcf", "")
+    dataset_name <- stringr::str_split(vcf_file,pattern = "_")  %>%
+                        unlist() %>% dplyr::last() %>%
+                        stringr::str_replace(".vcf", "")
 
     #   #get I16 info into a data.table
     I16_names <- c("R_Q13_F","R_Q13_R","NR_Q13_F","NR_Q13_R","RS_BQ",
@@ -39,19 +41,19 @@ process_vcf_purity <- function (vcf_file, ref, db_conn){
     PUR_Q97.5 <- sapply(VariantAnnotation::info(vcf)$I16,FUN=calc_quantile, p = 0.975)
     #
     #generate datatable
-    vcf_tbl <- data.table::data.table(CHROM = stringr::str_sub(string = rownames(info(vcf)),
+    vcf_tbl <- data.table::data.table(CHROM = stringr::str_sub(string = rownames(VariantAnnotation::info(vcf)),
                                           start = 1,end = 8),
-                          POS = VariantAnnotation::ranges(vcf)@start, WIDTH = VariantAnnotation::ranges(vcf)@width,
+                          POS = IRanges::ranges(vcf)@start, WIDTH = IRanges::ranges(vcf)@width,
                           INDEL=VariantAnnotation::info(vcf)$INDEL, DP = VariantAnnotation::info(vcf)$DP,
-                          QUAL = VariantAnnotation::vcf@fixed$QUAL, PUR, PUR_prob97,
+                          QUAL = vcf@fixed$QUAL, PUR, PUR_prob97,
                           PUR_Q2.5, PUR_Q50, PUR_Q97.5)
 
-    dplyr::copy_to(dest = db_con,df = vcf_tbl,name = stringr::str_c(dataset_name, "vcf", sep = "-"))
+    dplyr::copy_to(dest = db_con,df = vcf_tbl, name = stringr::str_c(dataset_name, "vcf", sep = "_"))
 
     I16$POS <- vcf_tbl$POS
     I16$WIDTH <- vcf_tbl$WIDTH
     I16$CHROM <- vcf_tbl$CHROM
-    dplyr::copy_to(dest = db_con,df = I16,name = stringr::str_c(dataset_name, "I16", sep = "-"))
+    dplyr::copy_to(dest = db_con,df = I16,name = stringr::str_c(dataset_name, "I16", sep = "_"))
 
     rm(vcf,vcf_tbl,I16,PUR,PUR_prob97)
 }
