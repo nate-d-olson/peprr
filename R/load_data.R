@@ -51,12 +51,14 @@ load_peprMeta <- function(metadata, db_con){
 parse_stat_name <- function(file_name){
     name_split <- stringr::str_split(file_name,pattern = "/")[[1]]
     name_file <- length(name_split)
-    stringr::str_split(name_split[length(name_split)], pattern = "_stats")[[1]][1]
+    stringr::str_split(name_split[length(name_split)],
+                       pattern = "_stats")[[1]][1]
 }
 
 read_metrics <- function(metrics_file, nskip){
     m_df <- read.table(metrics_file,
-                        skip = nskip, sep ="\t", header =T) %>%
+                        skip = nskip, sep ="\t",
+                       header =T, stringsAsFactors=F) %>%
         dplyr::mutate(accession = parse_stat_name(metrics_file))
     return(m_df)
 }
@@ -94,11 +96,8 @@ load_metrics <- function(metrics_dir, db_con){
 
 ## loading fastqc results
 load_fastqc <- function(metrics_dir, db_con){
-    # parsing and loading fastq summary metrics files into db
-    metrics_files <- list.files(metrics_dir,"fastqc_data.txt",full.names = TRUE,recursive = TRUE)
-
-    # create a named list of fastqc class objects
-    metrics_files <- list.files(metrics_dir,"fastqc_data.txt",full.names = TRUE,recursive = TRUE)
+    metrics_files <- list.files(metrics_dir,"fastqc_data.txt",
+                                full.names = TRUE,recursive = TRUE)
     read_fastqc <- plyr::llply(metrics_files, readFastQC)
     names(read_fastqc) <-  plyr::llply(metrics_files, .get_dataset_name)
 
@@ -131,12 +130,23 @@ load_purity <- function(purity_dir, db_con){
 ##### Base level analysis ####
 #load full genome vcf
 load_consensus <- function(con_base_dir, ref, db_con){
-    # need to test ...
-    vcf_dir_list <- list.files(con_base_dir,full.names = TRUE)
-    purrr::each(.x= vcf_dir_list,.f = process_vcf_purity, ref = ref, db_con = db_con)
+    # need to revisit only works for single sample inputs ...
+    vcf_dir_list <- list.files(con_base_dir, full.names = TRUE)
+    purrr::each(.x= vcf_dir_list,.f = process_vcf_purity,
+                ref = ref, db_con = db_con)
 }
 
 #### Homogeneity ####
 #load varscan results
-# varscan-indel
-# varscan_snp
+load_varscan <- function(homogeneity_dir, db_con){
+    # will potentially want to clean up the dataframe to trim off the % signs
+    # and convert to numeric
+    for(i in c("varscan-indel", "varscan-snp")){
+        file_list <- list.files(homogeneity_dir,
+                                pattern = paste0("*", i, "*"),full.names = TRUE)
+        varscan_df <- purrr::map(.x = file_list, .f = .read_varscan) %>%
+                        dplyr::rbind_all()
+        dplyr::copy_to(dest = db_con,df = varscan_df,
+                       name = stringr::str_replace(i, "-","_"))
+    }
+}
