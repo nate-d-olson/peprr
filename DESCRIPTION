@@ -13,5 +13,6 @@ Imports: dplyr,
     purrr,
     VariantAnnotation,
     magrittr,
-    data.table
+    data.table,
+    yaml
 Suggests: testthat
