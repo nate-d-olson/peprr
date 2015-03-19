@@ -199,17 +199,18 @@ load_pilon <- function(pilon_dir, db_con){
     }
 
     #better way to do this than two if statements
-    vcf_file <- list.files(pilon_dir, pattern = "*vcf",
-                           full.names = TRUE, recursive = TRUE)
-    if(length(as.vector(vcf_file))> 1){
-        warning("more than one pilon vcf file in directory skipping loading into database")
-    }else if(length(as.vector(vcf_file))==0){
-        warning("no vcf file in pilon directory")
-    }else {
-        vcf_df <- .vcf_to_df(vcf_file)
-        dplyr::copy_to(dest = db_con,df = vcf_df,
-                       name = "pilon_vcf", temporary = FALSE)
-    }
+    ## commenting out currently not working
+#     vcf_file <- list.files(pilon_dir, pattern = "*vcf",
+#                            full.names = TRUE, recursive = TRUE)
+#     if(length(as.vector(vcf_file))> 1){
+#         warning("more than one pilon vcf file in directory skipping loading into database")
+#     }else if(length(as.vector(vcf_file))==0){
+#         warning("no vcf file in pilon directory")
+#     }else {
+#         vcf_df <- .vcf_to_df(vcf_file)
+#         dplyr::copy_to(dest = db_con,df = vcf_df,
+#                        name = "pilon_vcf", temporary = FALSE)
+#     }
 }
 
 
