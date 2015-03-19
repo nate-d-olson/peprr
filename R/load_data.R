@@ -214,13 +214,36 @@ load_pilon <- function(pilon_dir, db_con){
 
 
 ##### Base level analysis ------------------------------------------------------
-#load full genome vcf
-load_consensus <- function(con_base_dir, ref, db_con){
-    # need to revisit only works for single sample inputs ...
-    vcf_dir_list <- list.files(con_base_dir, full.names = TRUE)
-    purrr::each(.x= vcf_dir_list,.f = process_vcf_purity,
-                ref = ref, db_con = db_con)
+#' Loads full genome vcf output data into sqlite db
+#' @param consensus_dir directory with consensus results
+#' @param db_con database connection
+#' @return NULL
+#' @examples
+#' load_pilon("/path/to/purity_dir", peprDB)
+load_consensus <- function(consensus_dir, db_con){
+    for(i in c("miseq", "pgm")){
+        tsv_file <- list.files(consensus_dir,
+                               pattern = paste0("*",i,".tsv"),
+                               full.names = TRUE)
+
+        cb_table <- paste0("cb_",i)
+        .cbtsv_tosql(tsv_file, db_con,cb_table)
+
+        pur_table <- paste0("pur_",i)
+        .pur_tbl(cb_table, db_con = db_con, pur_table)
+
+        pur_plat_table <- paste0("pur_",i, "_pooled")
+        .pur_plat(pur_table, db_con = db_con, pur_plat_table)
+    }
+    .pur_plat_join(pur_plat_tbl1 = "pur_miseq_pooled",
+                  pur_plat_tbl2 = "pur_pgm_pooled",
+                  db_con,
+                  tbl_name = "pur_pooled_join",
+                  plat1_name = "miseq", plat2_name = "pgm")
 }
+
+
+
 
 #### Homogeneity ---------------------------------------------------------------
 .parse_varscan_filename <- function(filename){
@@ -240,10 +263,13 @@ load_consensus <- function(con_base_dir, ref, db_con){
     df
 }
 
-#load varscan results
+#' Loads varscan output data into sqlite db
+#' @param homogeneity_dir directory with varscan results
+#' @param db_con database connection
+#' @return NULL
+#' @examples
+#' load_pilon("/path/to/homogeneity_dir", peprDB)
 load_varscan <- function(homogeneity_dir, db_con){
-    # will potentially want to clean up the dataframe to trim off the % signs
-    # and convert to numeric
     for(i in c("varscan-indel", "varscan-snp")){
         file_list <- list.files(homogeneity_dir,
                                 pattern = paste0("*", i, "*"),
@@ -261,6 +287,13 @@ load_varscan <- function(homogeneity_dir, db_con){
 }
 
 ## Create db -------------------------------------------------------------------
+#' Generates sqlite database from pipeline output
+#' @param db_path path for database
+#' @param params_yaml yaml pipeline configuration file
+#' @param qc_stats_dir directory with qc metrics
+#' @param homogeneity_dir directory with homogeneity results
+#' @params consensus_dir directory with consensus results
+#' @return NULL
 createPeprDB <- function(db_path,
                          param_yaml,
                          qc_stats_dir,
