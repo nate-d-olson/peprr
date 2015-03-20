@@ -75,12 +75,12 @@ contam_counts_figure <- function(db_con, genus){
                 dplyr::group_by(accession, plat, vial) %>%
                 dplyr::summarize(total_prop = sum(Final.Guess),
                                 prop_read = 1000000 *(1-total_prop))
-    ggplot2::ggplot(df) + geom_boxplot(aes(x = plat,
+    ggplot2::ggplot(df) + ggplot2::geom_boxplot(ggplot2::aes(x = plat,
                                            y = prop_read,
                                            color = plat)) +
-        theme_bw() +
-        labs(x = "Sequencing Platform",y = "Contaminants/Million Reads") +
-        theme(legend.position = "none")
+        ggplot2::theme_bw() +
+        ggplot2::labs(x = "Sequencing Platform",y = "Contaminants/Million Reads") +
+        ggplot2::theme(legend.position = "none")
 }
 
 #' create contamination distribution figure
@@ -88,11 +88,11 @@ contam_counts_figure <- function(db_con, genus){
 #' @param genus rm genus
 #' @return NULL
 contam_distribution_figure <- function(db_con,genus){
-    df <- .genomic_purity_df(db_con) %>% dplyr::filter(Contam == TRUE)
+    df <- .genomic_purity_df(db_con, genus) %>% dplyr::filter(Contam == TRUE)
     ggplot2::ggplot(df) +
-        geom_density(aes(x = Final.Best.Hit.Read.Numbers, fill = plat),
+        ggplot2::geom_density(ggplot2::aes(x = Final.Best.Hit.Read.Numbers, fill = plat),
                      alpha = 0.5) +
-        scale_x_log10() + theme_bw() +
-        labs(x = "Number of Reads",y = "Density", fill= "Platform") +
-        theme(legend.position = c(0.65,0.9), legend.direction = "horizontal")
+        ggplot2::scale_x_log10() + ggplot2::theme_bw() +
+        ggplot2::labs(x = "Number of Reads",y = "Density", fill= "Platform") +
+        ggplot2::theme(legend.position = c(0.65,0.9), legend.direction = "horizontal")
 }
