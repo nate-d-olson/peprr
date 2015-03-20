@@ -1,5 +1,5 @@
 # ## Functions for loading data into sqlite db
-.cbtsv_tosql <- function (tsv_file,db_conn,dplyr::tbl_name) {
+.cbtsv_tosql <- function (tsv_file,db_conn,tbl_name) {
   # tsv_file generated using vcf2tsv in vcflib
   # db_conn dplyr sqlite db connection
   #dplyr::tbl_name of table creating in sqlite db
@@ -10,7 +10,7 @@
 }
 
 # Calculating purity and filtering indels
-.pur_tbl <- function (vcf_tbl, db_conn,dplyr::tbl_name) {
+.pur_tbl <- function (vcf_tbl, db_conn,tbl_name) {
   # vcf_tbl sqlite table generated from a vcf file using cbtsv, note requires DP4 info for each sample
   # db_conn dplyr sqlite db connection
   #dplyr::tbl_name of table creating in sqlite db
