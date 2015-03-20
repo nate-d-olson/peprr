@@ -64,7 +64,6 @@ load_peprMeta <- function(metadata, db_con){
     return(m_df)
 }
 
-
 # generating df with metrics data
 .met_df <- function(met_type, metrics_files){
     met_list <- grep(pattern = met_type[[1]], metrics_files,value = TRUE)
@@ -197,7 +196,6 @@ load_pilon <- function(pilon_dir, db_con){
         dplyr::copy_to(dest = db_con,df = changes_df,
                        name = "pilon_changes", temporary = FALSE)
     }
-
     #better way to do this than two if statements
     ## commenting out currently not working
 #     vcf_file <- list.files(pilon_dir, pattern = "*vcf",
@@ -294,9 +292,9 @@ load_varscan <- function(homogeneity_dir, db_con){
 #' @param params_yaml yaml pipeline configuration file
 #' @param qc_stats_dir directory with qc metrics
 #' @param homogeneity_dir directory with homogeneity results
-#' @params consensus_dir directory with consensus results
-#' @params purity_dir directory with purity results
-#' @params pilon_dir directory with pilon results
+#' @param consensus_dir directory with consensus results
+#' @param purity_dir directory with purity results
+#' @param pilon_dir directory with pilon results
 #' @return NULL
 createPeprDB <- function(db_path,
                          param_yaml,
@@ -306,19 +304,12 @@ createPeprDB <- function(db_path,
                          purity_dir,
                          pilon_dir){
     peprDB <- init_peprDB(db_path = db_path,create = TRUE)
-
     load_peprMeta(param_yaml, db_con = peprDB)
-
     load_metrics(qc_stats_dir, db_con = peprDB)
-
     load_fastqc(qc_stats_dir, db_con = peprDB)
-
     load_varscan(homogeneity_dir, db_con = peprDB)
-
 #     load_consensus(consensus_dir, db_con = peprDB)
 # bug in function need to fix before adding to createPeprDB
-
     load_purity(purity_dir, db_con = peprDB)
-
     load_pilon(pilon_dir, db_con = peprDB)
 }
