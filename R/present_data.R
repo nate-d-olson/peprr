@@ -51,47 +51,48 @@ pilon_changes_table <- function(db_con){
 
 
 ### Genomic Purity -------------------------------------------------------------
-.genomic_purity_df <- function(db_con){
-    pathoDF <- read.csv("~/Desktop/micro_rm/micro_rm_dev/analysis/stats/genomic_purity/pathoDF.csv",
-                        stringsAsFactors = FALSE) %>%
-        select(-X)
-    sampleDF <- read.csv("~/Desktop/micro_rm/micro_rm_dev/analysis/stats/genomic_purity/sampleDF.csv",
-                         stringsAsFactors = FALSE) %>%
-        select(-X)
+.genomic_purity_df <- function(db_con,genus){
+    purity_df <- tbl(src = db_con, from = "purity") %>%
+        dplyr::collect()
 
-    df <- left_join(pathoDF, sampleDF)
-    df <- tbl(src = peprDB, from = "exp_design") %>% collect()  %>%
-        left_join(df, by = c("accession" = "sampleID")) %>%
-        select(accession, plat.y, vial, rep, Genome, Final_Guess,
-               Final_Best_Hit_Read_Numbers) %>%
-        rename(plat = plat.y)
+    df <- dplyr::tbl(src = peprDB, from = "exp_design") %>%
+            dplyr::collect() %>%
+            dplyr::left_join(df) %>%
+            dplyr::select(accession, plat, vial, rep, Genome, Final_Guess,
+               Final_Best_Hit_Read_Numbers)
 
-    df$Contam <- !(grepl("Salmonella", df$Genome))
-    df_salmonella <- df %>% filter(Contam == FALSE) %>%
-        group_by(accession, plat, vial) %>% summarize(total_prop = sum(Final_Guess),
-                                                      prop_read = 1000000 *(1-total_prop))
-
-    non_salmonella <- df %>% filter(Contam == TRUE)
+    df$Contam <- !(grepl(genus, df$Genome))
+    df
 }
 
-
-
-### Figures -----------------------------------------------------
-contam_counts_figure <- function(db_con){
-    df_salmonella <- .genomic_purity_df(db_con)
-ggplot(df_salmonella) + geom_boxplot(aes(x = plat,
-                                         y = prop_read,
-                                         color = plat)) +
-    theme_bw() +
-    labs(x = "Sequencing Platform",y = "Contaminants/Million Reads") +
-    theme(legend.position = "none")
+#' create contamination count figure
+#' @param db_con peprDB connection
+#' @param genus rm genus
+#' @return NULL
+contam_counts_figure <- function(db_con, genus){
+    df <- .genomic_purity_df(db_con, genus) %>%
+                dplyr::filter(Contam == FALSE) %>%
+                dplyr::group_by(accession, plat, vial) %>%
+                dplyr::summarize(total_prop = sum(Final_Guess),
+                                prop_read = 1000000 *(1-total_prop))
+    ggplot2::ggplot(df) + geom_boxplot(aes(x = plat,
+                                           y = prop_read,
+                                           color = plat)) +
+        theme_bw() +
+        labs(x = "Sequencing Platform",y = "Contaminants/Million Reads") +
+        theme(legend.position = "none")
 }
-ggsave(filename = "contam_prop.png",width = 4, height = 3.5, dpi = 450)
-### Distribution of contaminant by tax id
-ggplot(non_salmonella) +
-    geom_density(aes(x = Final_Best_Hit_Read_Numbers, fill = plat),
-                 alpha = 0.5) +
-    scale_x_log10() + theme_bw() +
-    labs(x = "Number of Reads",y = "Density", fill= "Platform") +
-    theme(legend.position = c(0.65,0.9), legend.direction = "horizontal")
-ggsave(filename = "contam_count.png",width = 4, height = 3.5, dpi = 450)
+
+#' create contamination distribution figure
+#' @param db_con peprDB connection
+#' @param genus rm genus
+#' @return NULL
+contam_distribution_figure <- function(db_con,genus){
+    df <- .genomic_purity_df(db_con) %>% dplyr::filter(Contam == TRUE)
+    ggplot2::ggplot(df) +
+        geom_density(aes(x = Final_Best_Hit_Read_Numbers, fill = plat),
+                     alpha = 0.5) +
+        scale_x_log10() + theme_bw() +
+        labs(x = "Number of Reads",y = "Density", fill= "Platform") +
+        theme(legend.position = c(0.65,0.9), legend.direction = "horizontal")
+}
