@@ -57,9 +57,9 @@ pilon_changes_table <- function(db_con){
 
     df <- dplyr::tbl(src = peprDB, from = "exp_design") %>%
             dplyr::collect() %>%
-            dplyr::left_join(df) %>%
-            dplyr::select(accession, plat, vial, rep, Genome, Final_Guess,
-               Final_Best_Hit_Read_Numbers)
+            dplyr::left_join(purity_df) %>%
+            dplyr::select(accession, plat, vial, rep, Genome, Final.Guess,
+               Final.Best.Hit.Read.Numbers)
 
     df$Contam <- !(grepl(genus, df$Genome))
     df
@@ -73,7 +73,7 @@ contam_counts_figure <- function(db_con, genus){
     df <- .genomic_purity_df(db_con, genus) %>%
                 dplyr::filter(Contam == FALSE) %>%
                 dplyr::group_by(accession, plat, vial) %>%
-                dplyr::summarize(total_prop = sum(Final_Guess),
+                dplyr::summarize(total_prop = sum(Final.Guess),
                                 prop_read = 1000000 *(1-total_prop))
     ggplot2::ggplot(df) + geom_boxplot(aes(x = plat,
                                            y = prop_read,
@@ -90,7 +90,7 @@ contam_counts_figure <- function(db_con, genus){
 contam_distribution_figure <- function(db_con,genus){
     df <- .genomic_purity_df(db_con) %>% dplyr::filter(Contam == TRUE)
     ggplot2::ggplot(df) +
-        geom_density(aes(x = Final_Best_Hit_Read_Numbers, fill = plat),
+        geom_density(aes(x = Final.Best.Hit.Read.Numbers, fill = plat),
                      alpha = 0.5) +
         scale_x_log10() + theme_bw() +
         labs(x = "Number of Reads",y = "Density", fill= "Platform") +
