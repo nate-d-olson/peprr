@@ -222,6 +222,7 @@ load_pilon <- function(pilon_dir, db_con){
 #' @examples
 #' load_pilon("/path/to/purity_dir", peprDB)
 load_consensus <- function(consensus_dir, db_con){
+    # error with input file for fread
     for(i in c("miseq", "pgm")){
         tsv_file <- list.files(consensus_dir,
                                pattern = paste0("*",i,".tsv"),
@@ -294,12 +295,16 @@ load_varscan <- function(homogeneity_dir, db_con){
 #' @param qc_stats_dir directory with qc metrics
 #' @param homogeneity_dir directory with homogeneity results
 #' @params consensus_dir directory with consensus results
+#' @params purity_dir directory with purity results
+#' @params pilon_dir directory with pilon results
 #' @return NULL
 createPeprDB <- function(db_path,
                          param_yaml,
                          qc_stats_dir,
                          homogeneity_dir,
-                         consensus_dir){
+                         consensus_dir,
+                         purity_dir,
+                         pilon_dir){
     peprDB <- init_peprDB(db_path = db_path,create = TRUE)
 
     load_peprMeta(param_yaml, db_con = peprDB)
@@ -310,7 +315,10 @@ createPeprDB <- function(db_path,
 
     load_varscan(homogeneity_dir, db_con = peprDB)
 
-    load_consensus(consensus_dir, db_con = peprDB)
+#     load_consensus(consensus_dir, db_con = peprDB)
+# bug in function need to fix before adding to createPeprDB
 
-    load_purity(purity_dir, db_con)
+    load_purity(purity_dir, db_con = peprDB)
+
+    load_pilon(pilon_dir, db_con = peprDB)
 }
