@@ -32,9 +32,8 @@ pilon_changes_table <- function(db_con){
     dplyr::tbl(src = peprDB, from="pilon_changes")  %>%
         dplyr::collect()
 }
-# table of pilon results
 
-##### Base level analysis ####
+##### Consensus base -----------------------------------------------------------
 ## purity plots - script to generate purity plots
 
 
@@ -46,8 +45,9 @@ pilon_changes_table <- function(db_con){
 ## indel analysis
 # correlate with homopolymer annotation results
 
-#### Homogeneity ####
-# table, figure, depending on results
+### Homogeneity ----------------------------------------------------------------
+# table and figures in present_homogeneity.R
+
 
 
 ### Genomic Purity -------------------------------------------------------------
@@ -88,7 +88,7 @@ contam_counts_figure <- function(db_con, genus){
 #' @param genus rm genus
 #' @return NULL
 contam_distribution_figure <- function(db_con,genus){
-    df <- .genomic_purity_df(db_con, genus) %>% dplyr::filter(Contam == TRUE)
+    df <-.genomic_purity_df(db_con, genus) %>% dplyr::filter(Contam == TRUE)
     ggplot2::ggplot(df) +
         ggplot2::geom_density(ggplot2::aes(x = Final.Best.Hit.Read.Numbers, fill = plat),
                      alpha = 0.5) +
@@ -96,3 +96,5 @@ contam_distribution_figure <- function(db_con,genus){
         ggplot2::labs(x = "Number of Reads",y = "Density", fill= "Platform") +
         ggplot2::theme(legend.position = c(0.65,0.9), legend.direction = "horizontal")
 }
+
+## %%TODO%% Contam heatmap
