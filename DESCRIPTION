@@ -4,14 +4,13 @@ Version: 0.0.0.9000
 Authors@R: person("Nathan", "Olson", , "nolson@nist.gov", role = c("aut", "cre"))
 Description: Utility functions for processing results from the pepr pipeline
 Depends: R (>= 3.1.2)
-License: What license is it under?
+License: CCO
 LazyData: true
 Imports: dplyr,
     tidyr,
     knitr,
     stringr,
     purrr,
-    VariantAnnotation,
     magrittr,
     data.table,
     yaml,
