@@ -40,36 +40,40 @@ peprDB <- dplyr::src_sqlite(db_path)
 
 # Introduction
 ## General background
-Increasingly, high stakes decisions impacting public health and safety are being made using microbial genomic sequencing data[@Tang2014]. For example, whole genome sequencing was recently used as part of an investigation of the European 2011 Escherichia coli O1O4:H4 sprout associated outbreak [@Grad2012]. As the stakes increase so does the required level of confidence in the measurement. This reference material as well as three other microbial genomic DNA RM8375-8378 were developed to help advance the measurement assurance of microbial genomic sequencing and DNA sequencing in general. The development of these reference material was supported through an Interagency agreement with the Food and Drug Administration's Center for Devices, for use in validating DNA sequencing platforms for clinical applications.
+Increasingly, high stakes decisions impacting public health and safety are being made using microbial genomic sequencing data [@Tang2014]. For example, whole genome sequencing was recently used as part of an investigation of the European 2011 Escherichia coli O1O4:H4 sprout associated outbreak [@Grad2012]. As the stakes increase so does the required level of confidence in the measurement. This reference material as well as three other microbial genomic DNA RM8375-8378 were developed to help advance the measurement assurance of microbial genomic sequencing and DNA sequencing in general. The development of these reference material was supported through an Interagency agreement with the Food and Drug Administration's Center for Devices, for use in validating DNA sequencing platforms for clinical applications.
 
 ## Material Description
 RM`r rm_number` is extracted genomic DNA from `r rm_strain`.   
-__SPECIFIC TO RM__ strain specific information: why selected, genome sequence reference
 
-Loftstrand Labs Limited grew a large batch of `r rm_strain` provided by `r strain_source`  to produce ~ `r (rm_vial_number * 3)/1000` mg of total extracted DNA, divided equally into `r rm_vial_number` vials (Appendix: [Section A][], [Section B][]). Each unit of `r rm_number` is approximately `r rm_mass` ug of extracted genomic DNA in Tris buffer.  The material is stored in 0.5 ml screw cap microcentrifuge tubes (Item number 1405-9710 USA Scientific [^usa]).
+__SPECIFIC TO RM__ strain specific information
+- why the strain was selected
+- Genbank genome sequence reference
+
+Loftstrand Labs[^lofstrand] Limited grew a large batch of `r rm_strain` provided by `r strain_source`  to produce ~ `r (rm_vial_number * 3)/1000` mg of total extracted DNA, divided equally into `r rm_vial_number` vials (Appendix: [Section A][], [Section B][]). Each unit of `r rm_number` is approximately `r rm_mass` ug of extracted genomic DNA in Tris buffer.  The material is stored in 0.5 ml screw cap microcentrifuge tubes (Item number 1405-9710 USA Scientific [^usa]).
+
 __SPECIFIC TO RM__ acquisition and handeling description
-The reference material was generated ....
-
-- __SPECIFIC TO RM__ culture conditions
-- __SPECIFIC TO RM__ DNA extraction methods 
-
-This RM is isolated DNA rather than live cells because cells can mutate with each cell division, and the genome sequence may not be stable over time for live cells.  Extracting DNA from a large batch of cells helps ensure that all vials contain essentially the same sequences of DNA.  Even though the DNA in the cells is likely to mutate at low frequency during the growth, the resulting mutations will be in extremely small proportions of the overall cells unless they confer a selective advantage and occur early in the culture process.  Even if any mutations confer a selective advantage, the DNA from the large batch of cells was mixed before aliquoting to help ensure each of the vials contains approximately the same proportions of any mutations. 
+- culture conditions 
+- DNA extraction methods
+ 
+This RM is isolated DNA rather than live cells because cells can mutate with each cell division, and the genome sequence may not be stable over time for live cells. Extracting DNA from a large batch of cells helps ensure that all vials contain essentially the same DNA sequences. Even though the DNA in the cells is likely to mutate at low frequency during the growth, the resulting mutations will be in extremely small proportions of the overall cells unless they confer a selective advantage and occur early in the culture process. Even if any mutations confer a selective advantage, the DNA from the large batch of cells was mixed before aliquoting to minimize the variability in the proportions of mutations among vials. 
  
 ## Intended Use
-The intended use of `r rm_number` is to help assess performance of high-throughput DNA sequencing.  Their are two primary intended use cases for the RM;
-1. Sequencing applications could include DNA sequencing and data analysis method validation and quality control as part of a laboratory quality control program,
-2. microbial genome sequencing for DNA sequencing which would include genome assembly, read mapping base variant calling methods.
+The intended use of `r rm_number` is to help assess performance of high-throughput DNA sequencing.  Their are two primary intended use cases for the RM:  
+
+1. DNA sequencing and data analysis method validation and quality control as part of a laboratory quality control program;     
+2. microbial genome sequencing for DNA sequencing including genome assembly, read mapping based variant calling methods.   
+
+The genomic DNA is intended to be analyzed in the same way as any other sample a laboratory would analyze extracted DNA, such as through the use of a genome assembly or variant calling bioinformatic pipeline (Figure Measurement Process Diagram).  Because the RM is extracted DNA, it does not assess pre-analytical steps such as DNA extraction. It does however, challenge sequencing library preparation, sequencing machines, base calling algorithms, and the subsequent bioinformatic analysis.  This RM is not intended to assess bioinformatics steps such as strain identificaiton, phylogenetic analysis, or genome annotation. It is important to recognize the genome sequence is “Reference Value” rather than “Certified Value” because we were not yet fully confident that we accounted for all known biases.  However, we evaluated the individual base calls and genome assembly for a number of known sources of bias, e.g. repeat regions, and included additional information regarding these sources of bias (see vcf and gff files). 
 
 ```{r echo = FALSE, fig.width = 6, fig.align='center', fig.cap= "Generic measurement process for genome assembly and variant calling intended use cases.  For sequencing quality control the results from the sequencing step would be compared to the reference material genome sequence to determine base level sequencing accuracy."}
 grid.raster(readPNG("measurement_process.png"))
 ```
   
-The genomic DNA is intended to be analyzed in the same way as any other sample a lab would analyze extracted DNA, such as through the use of a genome assembly or variant calling bioinformatic pipeline.  Because the RM is extracted DNA, it does not assess pre-analytical steps such as DNA extraction. It does however, challenge sequencing library preparation, sequencing machines, base calling algorithms, and the subsequent bioinformatic analysis.  This RM is not intended to assess bioinformatics steps such as strain identificaiton, phylogenetic analysis, or genome annotation. It is important to recognize the genome sequence is “Reference Value” rather than “Certified Value” because we were not yet fully confident that we accounted for all known biases.  However, we evaluated the individual base calls and genome assembly for a number of known sources of bias, e.g. repeat regions, and included additional information regarding these sources of bias. 
 
 ## Genome Sequence as a reference value
-Characterizing a microbial genome RM at each of $`r rm_genome_size/1000000`\times 10^6$ positions poses a significant metrological challenge.The consensus base call at each genomic position is a “nominal property”, because it is not a numerical value.  A previous sequence-based SRM 2374 was certified primarily based on capillary (or “Sanger”) sequencing, a relatively mature sequencing technology that is not easily scalable to whole genomes.  The maturity of capillary sequencing as well as the small size of SRM 2374 (< 100,000 bases) allowed for manual curation of capillary sequencing traces across the entire DNA sequences, and the assignment of qualitative (non-probabilistic) statements about the uncertainty of each base call.
+Characterizing a microbial genome RM at each of the $`r rm_genome_size/1000000`\times 10^6$ positions poses a significant metrological challenge. The consensus base call at each genomic position is a “nominal property”, because it is not a numerical value.  A previous sequence-based SRM 2374 was certified primarily based on capillary (or “Sanger”) sequencing, a relatively mature sequencing technology that is not easily scalable to whole genomes.  The maturity of capillary sequencing as well as the small size of SRM 2374 (< 100,000 bases) allowed for manual curation of capillary sequencing traces across the entire DNA sequences, and the assignment of qualitative (non-probabilistic) statements about the uncertainty of each base call.
 
-To characterize `r rm_number`, we relied primarily on a variety of less mature “Next Generation Sequencing” (NGS) technologies. Unlike capillary sequencing, NGS technologies can sequence a whole genome at a reasonable cost.  NGS technologies measure many reads at each position, from which variant callers and consensus base callers calculate probabilistic estimates of uncertainty based on Bayesian statistics and assuming binomial sampling.  Unfortunately, these probabilistic estimates of uncertainty are rarely accurate due to various sources of bias and error in the sequencing and bioinformatics (Fig 1).  Therefore, to develop a characterized reference genome sequence we first generated an assembly of the whole genome then performed a base level analysis of the genome assembly.  
+To characterize `r rm_number`, we relied primarily on a variety of less mature “Next Generation Sequencing” (NGS) technologies. Unlike capillary sequencing, NGS technologies can sequence a whole genome at a reasonable cost.  NGS technologies measure many reads at each position, from which variant callers and consensus base callers calculate probabilistic estimates of uncertainty based on Bayesian statistics and assuming binomial sampling.  Unfortunately, these probabilistic estimates of uncertainty are rarely accurate due to various sources of bias and error in the sequencing and bioinformatics (Fig Cause-Effect Diagram).  Therefore, to develop a characterized reference genome sequence we first generated an assembly of the whole genome then performed a base level analysis of the genome assembly.  
 
 The sources of bias and error associated with different steps in the sequence measurement process are indicated in the cause-effect diagram below (Fig XYZ). Please see Olson (et al. _in prep_) for a detailed discussion of these sources of error.
 
@@ -77,69 +81,51 @@ The sources of bias and error associated with different steps in the sequence me
 grid.raster(readPNG("MicroRMCauseEffect.png"))
 ```
 
-In additional to the sources of error and bias associated with the measurement their is an unknown degree of biological variabilitility within the batch.  The genomic DNA was homogeneized prior to aliquoting into the individual vials but the biologically variability within the population of cells from which the DNA was extracted is unknown.  The mutations that make up this variability include single nucleotide polymorphisms (SNPs), insertions and deletions (indels), as well as structural variants.  Low frequency SNPs and indels can be mistaken as sequencing errors and low frequency structural variants can lead to ambiguities in the genome assembly.  Our characterization methods did not attempt to identify low frequency biologically variability within the RM batch, however, interpretation of the characterization procedure results should take the potential for these low frequency mutations into consideration.
+In additional to the sources of error and bias associated with the measurement their is an unknown degree of biological variabilitility within the batch.  The genomic DNA was homogeneized prior to aliquoting into the individual vials but the biologically variability within the population of cells from which the DNA was extracted is unknown.  The mutations that make up this variability include single nucleotide polymorphisms (SNPs), insertions and deletions (indels), as well as structural variants.  Low frequency SNPs and indels can be mistaken as sequencing errors and low frequency structural variants can lead to ambiguities in the genome assembly.  Our characterization methods did not attempt to identify low frequency biologically variability within the RM batch, however, when interpreting the reference material characterization procedure results the potential for these low frequency mutations should be considered.
     
-Genomic purity, genome annotation, homopolymer length, and identification of repeat regions are provided as information value have not been evaluated for sources of bias an error.  The genomic purity of the reference material was assessed using a taxonomic sequence classification algorithm, the accuracy of the method was evaluated using simulated sequence data (Olson et al. _in prep_).  However, sources of bias associated with the measurement, namely accuracy of the database used for taxonomic assignment and the assignment algorithm have not been investigated.Genome annotation is a major field of study within the biological scientific community and represents an unsolved problem in genomics, for well characterized strains such as `r rm_strain` the annotation has been highly curated, however the accuracy of the annotation is unknown.   The accuracy of the homopolyer length and repeation regions information is dependent on the reference genome sequence and therefore share the same sources of error and bias as the methods used to determine the reference genome sequence.
+Genomic purity, genome annotation, homopolymer length, and identification of repeat regions are provided as information values and have not been evaluated for sources of bias an error.  The genomic purity of the reference material was assessed using a taxonomic sequence classification algorithm, the accuracy of the method was evaluated using simulated sequence data (Olson et al. _in prep_).  However, sources of bias associated with the measurement, namely accuracy of the database used for taxonomic assignment and the assignment algorithm have not been investigated. Genome annotation is a major field of study within the biological scientific community and represents an unsolved problem in genomics, for well characterized strains such as `r rm_strain` the annotation has been highly curated, however the accuracy of the annotation is unknown. The accuracy of the homopolyer length and repeat region information is dependent on the reference genome sequence and therefore share the same sources of error and bias as the methods used to determine the reference genome sequence.
 
 # Characterization Process
-## Sequencing Measurements
+## Sequence Characterization
+### Sequencing Measurements
 The reference materials were sequenced using the Illumina[^illumina] MiSeq and Ion Torrent[^iontorrent] PGM at NIST.  Eight vials from the `r rm_number` lot were randomly selected. 
 
-__TODO__ Sequencing methods
-
-* library preparation and sequencing protocols    
-* non-NIST measurements    
+__%%TODO%%__ Sequencing methods
+- library preparation and sequencing protocols    
+- non-NIST measurements    
     * OpGen  
     * PacBio  
 
-## Analysis of Sequencing Data
-### Methods overview
-__TODO__
+### Sequence Analysis Methods
+For the genome assembly we started with a _de novo_ genome assembly and validated the assembly using optical mapping and sequencing data generated using orthogonal measurement methods. Long read sequence data generated with the Pacific Biosciences [^pacbio] RSII generate sequence reads with a median length of around 8kb, which is long enough to spand the ribosomal operon repeat regions, often resulting in a complete genome assembly [@Koren2013]. While the long reads allow for the assembly of a complete genome the relatively high base call error rate ~20% for individual reads can lead to misassemblies. 
 
-* Purity -
+To validate the assembly othogonal methods optical mapping and short read seqeuncing were used.  Optical mapping provides information regarding the overall structure of the genome based on the location of restriction sites within long fragments (average size > 200Mb).  Comparison of the fragment patterns between the optical mapping data and _in-silico_ generated fragment patterns from the genome assembly indicates potential misassemblies in the genome assembly [@Mendelowitz2014]. The Optical mapping data was generated by a commercial vendor OpGen[^opgen] and sources of bias and error have not been fully investigated. The due to the resolution limit of the optical mapping method it is unable to detect missassemblies smaller than 3 kb.  
 
-Identification of DNA from other sources other than the cultured isolate.  
-For the genome assembly we started with a _de novo_ genome assembly and validated the assembly using optical mapping and sequencing data generated using orthogonal measurement methods. Long read sequence data generated with the Pacific Biosciences [^pacbio] RSII generate sequence reads with a median length of around 8kb, which is long enough to spand the ribosomal operon repeat regions, often resulting in a complete genome assembly [@Koren2013]. While the long reads allow for the assembly of a complete genome the relatively high base call error rate ~20% for individual reads can lead to misassemblies, where parts of a genome are next to eachother in a genome assembly that are not near each other in the true genome sequence. 
+Potential misassemblies smaller than 3 kb were identified using short read data generated using orthogonal sequencing technologies Illumina[^illumina] MiSeq, and Ion Torrent[^iontorrent] PGM and Pilon [@Walker2014], software developed to identify and correct misassemblies in microbial genomes.  The sources of bias associated with each of the orthogonal methods were not fully investigated and agreement between the methods supports the hypothesis that the assembly is correct. 
 
-To validate the assembly othogonal methods optical mapping and short read seqeuncing were used.  Optical mapping provides information regarding the overall structure of the genome based on the location of restriction sites within long fragments (average size > 200Mb).  Through comparison of the fragment patterns between the optical mapping data and fragment patterns simulated from the genome assembly allows for the identification of missassemblies [@Mendelowitz2014]. The due to the resolution limit of the optical mapping method it is unable to detect missassemblies smaller than 3 kb.  The Optical mapping data was generated by a commercial vendor OpGen[^opgen] and sources of bias and error have not been fully investigated.  To identify potential misassemblies smaller than 3 kb, short read data generated using orthogonal sequencing technologies Illumina[^illumina] MiSeq, and Ion Torrent[^iontorrent] PGM were used along with the Plion software [@Walker2014], which was developed to identify and correct misassemblies in microbial genomes.  The sources associated with each of the orthogonal methods were not fully investigated agreement between the methods supports the hypothesis that the assembly is correct.  Disagreements between the genome assembly and the optical mapping or short read results were investigated for sources of bias to account for the discrepancy and the genome assembly was corrected if appropirate.  If we were unable to identify the source of the bias that resulted in the misassembly the genome sequence is annotated appropriately to indicate region where the assembly is ambiguous. It is important to note that agreement between orthogonal methods does not guaruntee a correct result as they may all be susseptible to the source(s) of bias, therefore we intend to update the genome assembly as new data is collected and errors in the assembly are revealed.
+Disagreements between the genome assembly and the optical mapping or short read results were investigated for sources of bias to account for the discrepancy. When appropriate the genome assembly was corrected.  If we were unable to identify the source of the bias that caused the misassembly the genome sequence is annotated appropriately to indicate region where the assembly is ambiguous. It is important to note that agreement between orthogonal methods does not guarantee a correct result as they may all be suseptible to the same source(s) of bias, therefore we intend to update the genome assembly as new data is collected and errors in the assembly are revealed.
     
-__TODO__ Methods used to perform base level sequence analysis, consensus and homogeneity
-__TODO__ Methods usied to annotate genome - information value, framework for evaluating variants relative to know sources of bias associated with the reference genome  
-* gene annotation  
-* repeat regions  
-* homopolymers  
+Base level analysis was performed by evaluating the proportion of sequencing reads with bases supporting the genome assembly base call at individual genome positions, within the the lot (base purity) and among individual vials (base homogeneity). Short read sequencing data generated using the MiSeq and PGM were used for base level analysis. Base purity was defined for the two platform individually, using samtools mpileup __%%TODO%% REF__. Base homogeneity, was assessed using varscan somatic variant caller __%%TODO%% REF__, using the methods described in RM8398 report of analysis __%%TODO%% REF__. Additional genome annotation information was obtained to provide context for base level sequence analysis include gene annotation, identification of repeat regions, and homopolymer length. Genome annotation was performed using the RAST server[^rast]. Repeat regions were identified using mumer __%%TODO%% REF__.  
 
-__TODO__ Supplemental material: genome sequence with annotation and base level analysis     
+The purity of the reference material in terms of presense of DNA from sources other than `r rm_strain` was assessed using the metagenomic taxonomic read classification algorithm PathoScope __%%TODO%% REF__.  This method uses an expectation maximization algorithm where the sequence data are first mapped to a database comprised on all sequence data in the Genbank nt database __%%TODO%% REF__, then through an iterative process re-assigns ambiguously mapped reads to based on the proportion of reads mapped unambigously to individual taxa in the database. 
 
-### Method Reproducibility
-The methods used to characterize the reference material were developed in a manner to facilitate reuse and ensure computational reproduciblity, obtaining the same results when starting with the same set of measurement data.  To achive this goal the data, computer code, as well as the computing environment were all made publically available.  The raw sequence data is archived at the Genbank Sequence Read Archive ([ncbi.nlm.nih.gov/sra](http://www.ncbi.nlm.nih.gov/sra)), see table __XYZ__ in the summary of sequencing data results section for accession numbers.  The code used to characterize the material is available through GitHub as a python bioinformatics program ([github python repo](http://www.github/nate-d-olson/tobenamedpython)) and an R package ([github Rrepo](http://www.github/nate-d-olson/tobenamedR)).  The python bioinformatics pipeline performs the initial sequence analysis and uses a Docker environment for dependencies [docker.org](http://www.docker.com). A flowchat of the bioinformatic pipeline used to characterize the RM can be found in Appendix [Section D][]. The R package, includes functions for loading the output from the bioinformatics pipeline into an sqlite database, and generating the summary figures and tables found within this report of analysis.  
+#### Method Reproducibility
+The methods used to characterize the reference material were developed in a manner to facilitate reuse and ensure computational reproduciblity, obtaining the same results when starting with the same set of measurement data.  To achive this goal the data, computer code, as well as the computing environment were all made publically available.  The raw sequence data is archived at the Genbank Sequence Read Archive ([ncbi.nlm.nih.gov/sra](http://www.ncbi.nlm.nih.gov/sra)), see table __%%TODO%% REF__ in the summary of sequencing data results section for accession numbers.  The code used to characterize the material is available through GitHub as a python bioinformatic program ([github python repo](http://www.github/nate-d-olson/tobenamedpython)) and an R package ([github Rrepo](http://www.github/nate-d-olson/tobenamedR)).  The python bioinformatics pipeline performs the initial sequence analysis and uses a Docker environment for dependencies [docker.org](http://www.docker.com). A flowchat of the bioinformatic pipeline used to characterize the RM can be found in Appendix [Section D][]. The R package, includes functions for loading the output from the bioinformatics pipeline into an sqlite database and generating the summary figures and tables found within this report of analysis.  
 
-## Results
-### Summary of sequencing datasets
+### Sequence Analysis Results
+#### Summary of Sequencing Datasets
 __SPECIFIC TO RM__ Description of datasets
-__TODO__ add coverage to table
+__%%TODO%%__ 
+- add coverage to table
+- add pacbio to table
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
 kable(seq_summary_table(peprDB), 
       round = 0, row.names = FALSE, caption = "Summary of sequencing datasets")
 ```
 
-
-### Purity
-__SPECIFIC TO RM__ Description of purity results
-```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Proportion of reads from contaminant DNA."}
-contam_counts_figure(peprDB, rm_genus)
-```
-
-```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Read count frequency for contamiants."}
-contam_distribution_figure(peprDB, rm_genus)
-```
-
-__TODO__ Table of Contaminants - potentially supplemental, with comparison of contaminants by platform and other variables
-
-### Genome Sequence
-#### Assembly
+#### Genome Assembly
 __SPECIFIC TO RM__ Description of genome assembly
-__TODO__ _de-novo_ Assembly characteristics table?
+__%%TODO%%__ _de-novo_ Assembly characteristics
 
 __SPECIFIC TO RM__ Describe optical mapping results
 
@@ -167,20 +153,21 @@ kable(pilon_changes_table(peprDB),
 
 __SPECIFIC TO RM__ Discussion and analysis of questiontionable regions
 
-#### Base level analysis
+#### Base Level Analysis
+##### Base Purity
 __SPECIFIC TO RM__ description of results
-__TODO__ purity plots
+__%%TODO%%__ purity plots
 
-__TODO__ Analysis of low purity positions 
-__TODO__ figures correlating different parameters with low purity positions  
-* coverage plots
-* known sources of bias
+__%%TODO%%__ Analysis of low purity positions 
+__%%TODO%%__ figures correlating different parameters with low purity positions  
+- coverage plots
+-  known sources of bias
 
-__TODO__ table of low purity positions 
+__%%TODO%%__ table of low purity positions 
 
-__TODO__ indel analysis
+__%%TODO%%__ indel analysis
 
-#### Sequence homogeneity
+##### Sequence homogeneity
 __SPECIFIC TO RM__ description of results
 
 ```{r echo =FALSE}
@@ -197,16 +184,23 @@ homogeneity_pvalue_figure(peprDB)
 homogeneity_freq_figure(peprDB)
 ```
 
-#### Annotation
+##### Genome Annotation
 __SPECIFIC TO RM__ Overview - highlight interesting findings, if necessary, RM specific
 
-__TODO__ Supplemental annotation file - putting all of the pieces together
-* repeats
-* homopolymers
-* genome annotation
+#### Genomic Purity
+__SPECIFIC TO RM__ Description of purity results
+```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Proportion of reads from contaminant DNA."}
+contam_counts_figure(peprDB, rm_genus)
+```
 
-## DNA Fragment Size-Based Homogeneity and Stability Measurements
-### Material Stability and Homogeneity
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Read count frequency for contamiants."}
+contam_distribution_figure(peprDB, rm_genus)
+```
+
+__%%TODO%%__ Table of Contaminants - potentially supplemental, with comparison of contaminants by platform and other variables
+
+## DNA Fragment Size Characterization
+### DNA Fragment Size Stability and Homogeneity
 `r rm_number` is homogeneous and stable under the recommended storage conditions, although there is evidence that DNA fragment size may change over time, as indicated by the confidence of reviewers.  Samples were exposed to aging and handling conditions outside those recommended for normal use in a controlled experimental setting.  The results of these experiments indicate the only variability in unit-to-unit stability may come after advanced aging.  No other observable differences were observed for handling or storage conditions.
 The examination of several vials of material across the lot allocation by PFGE constitutes the homogeneity study for this material; no inhomogeneity is observed from unit-to-unit.
 
@@ -226,8 +220,10 @@ For handling conditions, triplicate vials were subjected to pipetting, vortexing
 All temperature-based conditions were monitored with a data logger to track temperature, humidity and dew point over the entirety of the time-course.  All samples were stored in opaque boxes to minimize exposure the light.  At the conclusion of the time-course samples were placed in a -20°C freezer until measurements were made.
 
 ### Analysis of Homogeneity and Stability Study
-### Homogeneity Study Results
-### Stability Study Results
+
+#### Homogeneity Study Results
+
+#### Stability Study Results
 
 # Appendix
 ## Section A
@@ -248,7 +244,7 @@ grid.raster(readPNG("bioinf-pipeline-flowchart.png"))
 ```
 
 ## Section D
-__TODO__ Gel Images
+__%%TODO%%__ Gel Images
 
 # References
 
@@ -257,3 +253,5 @@ __TODO__ Gel Images
 [^illumina]: Illumina Inc., [illumina.com/](http://www.illumina.com/) 5200 Illumina Way San Diego, CA 92122 USA
 [^iontorrent]: Life Technologies Corp., [iontorrent.com/](http://www.iontorrent.com/) 7000 Shoreline Court #201, South San Francisco, CA 94080 USA
 [^pacbio]: Pacific Biosciences of California Inc. [pacificbiosciences.com/](http://www.pacificbiosciences.com/) 1380 Willow Rd. Menlo Park, CA 94025 USA
+[^rast]: Rapid Annotaiton Using Subsystem Technology (RAST) server [rast.nmpdr.org](http://rast.nmpdr.org/rast.cgi)
+[^lofstrand]: Lofstrand Labs Limited 7961 Cessna Avenue, Gaithersburg, MD 20879 [lofstrand.com/](http://www.lofstrand.com/)
