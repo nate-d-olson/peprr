@@ -218,7 +218,7 @@ load_pilon <- function(pilon_dir, db_con){
 #' @param db_con database connection
 #' @return NULL
 #' @examples
-#' load_pilon("/path/to/purity_dir", peprDB)
+#' load_consensus("/path/to/purity_dir", peprDB)
 load_consensus <- function(consensus_dir, db_con){
     # error with input file for fread
     for(i in c("miseq", "pgm")){
