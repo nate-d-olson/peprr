@@ -2,10 +2,10 @@
 .cbtsv_tosql <- function (tsv_file,db_con,tbl_name) {
   # tsv_file generated using vcf2tsv in vcflib
   # db_conn dplyr sqlite db connection
-  #dplyr::tbl_name of table creating in sqlite db
+  #tbl_name of table creating in sqlite db
   vcf <- data.table::fread(tsv_file,sep = "\t",header = TRUE,stringsAsFactors = FALSE)
   vcf <- dplyr::rename(vcf, PLATDP=DP) # added to fix issue with two DP columns
-  dplyr::copy_to(db_con, vcf, name =dplyr::tbl_name, temporary = FALSE,
+  dplyr::copy_to(db_con, vcf, name = tbl_name, temporary = FALSE,
                  indexes = list("CHROM","POS","SAMPLE"))
 }
 
@@ -13,7 +13,7 @@
 .pur_tbl <- function (vcf_tbl, db_con,tbl_name) {
   # vcf_tbl sqlite table generated from a vcf file using cbtsv, note requires DP4 info for each sample
   # db_conn dplyr sqlite db connection
-  #dplyr::tbl_name of table creating in sqlite db
+  #tbl_name of table creating in sqlite db
 
   # dplyr::select desired columns and filtering indels
   vcf_dp4 <-dplyr::tbl(src = db_con, from = vcf_tbl)  %>%
