@@ -1,0 +1,6 @@
+<!-- 
+Text specific to RM: genome annotation summary
+highlight interesting findings, if necessary
+--> 
+___SPECIFIC TO RM__ genome annotation
+

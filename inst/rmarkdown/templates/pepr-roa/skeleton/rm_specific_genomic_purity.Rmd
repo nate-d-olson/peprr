@@ -1,0 +1,5 @@
+<!-- 
+Text specific to RM: genomic purity summary
+--> 
+___SPECIFIC TO RM__ genomic purity
+
