@@ -65,7 +65,7 @@ low_pur_metrics <- function(db_con){
 
 low_pur_metrics_figure <- function(db_con){
     low_pur_metrics(db_con) %>% tidyr::gather("metric","value", 3:7) %>%
-        ggplot2::ggplot(lpm) + ggplot2::geom_point(ggplot2::aes(x = metric, y = value, color = plat)) +
+        ggplot2::ggplot() + ggplot2::geom_point(ggplot2::aes(x = metric, y = value, color = plat)) +
             ggplot2::facet_wrap(~POS) + ggplot2::theme_bw() +
             ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
 }
