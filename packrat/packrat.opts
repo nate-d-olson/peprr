@@ -2,7 +2,11 @@ auto.snapshot: TRUE
 use.cache: FALSE
 print.banner.on.startup: auto
 vcs.ignore.lib: TRUE
+<<<<<<< HEAD
 vcs.ignore.src: FALSE
+=======
+vcs.ignore.src: TRUE
+>>>>>>> 403afe872190c0acd12dbe7f3737b971acff260c
 external.packages: 
 local.repos: 
 load.external.packages.on.startup: TRUE
