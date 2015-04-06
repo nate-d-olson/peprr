@@ -38,7 +38,8 @@ pilon_changes_table <- function(db_con){
 
 
 ## Analysis of low purity positions
-# figures correlating different parameters with low purity positions - e.g. bias and coverage
+# figures correlating different parameters with low purity positions
+# e.g. bias and coverage
 
 # table of low purity positions
 
@@ -97,4 +98,36 @@ contam_distribution_figure <- function(db_con,genus){
         ggplot2::theme(legend.position = c(0.65,0.9), legend.direction = "horizontal")
 }
 
-## %%TODO%% Contam heatmap
+#' create contaminant heatmap
+#' @param db_con peprDB connection
+#' @param genus rm genus
+#' @return NULL
+contam_heatmap_figure <- function(db_con,genus){
+    df <-.genomic_purity_df(db_con, genus) %>% dplyr::filter(Contam == TRUE) %>%
+        dplyr::filter(Final.Best.Hit.Read.Numbers > 1)
+    genome_count_df <- df %>% dplyr::group_by(Genome)  %>%
+        dplyr::summarize(count = n())  %>%
+        dplyr::filter(count > 2)
+    filt_df <- df %>% dplyr::filter(Genome %in% genome_count_df$Genome) %>%
+        tidyr::separate(Genome, c("X1","ti", "X2", "org"),
+                        sep = "\\|",remove = FALSE) %>%
+        tidyr::separate(org, into = c("Genus", "species"),
+                        sep = "_",extra = "drop") %>%
+        dplyr::mutate(org_name = paste(Genus, species, sep = " ")) %>%
+        dplyr::group_by(accession, org_name, plat, vial, rep) %>%
+        dplyr::summarise(count = sum(Final.Best.Hit.Read.Numbers)) %>%
+        dplyr::filter(org_name != "Unknown. NA") %>%
+        dplyr::arrange(count)
+    ggplot2::ggplot(filt_df) +
+        ggplot2::geom_raster(ggplot2::aes(y = org_name, x = accession, fill = count)) +
+        ggplot2::theme_bw() +
+        ggplot2::facet_wrap(~plat, scale = "free_x") +
+        ggplot2::labs(x = "Datasets",y = "Organism", fill= "Hit Count") +
+        ggplot2::theme(legend.position = "bottom",
+                       legend.direction = "horizontal",
+                       axis.text.x = ggplot2::element_text(angle = 90))
+}
+# need to work out how to best cleanup taxa information .....
+# using taxize package
+# tax_id <- unique(filt_df$org)  %>% str_replace_all("-", " ")  %>% map(.f = get_uid)  %>% map(.f = classification, db = "ncbi")
+# for( i in tax_id){id <-names(i);id_df <- i[[id]]; id_df$id <- id;}
