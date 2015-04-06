@@ -70,11 +70,16 @@ load_peprMeta <- function(metadata, db_con){
 
 # loading individual metric files
 .read_metrics <- function(metrics_file, nskip, n_rows){
-    m_df <- read.table(metrics_file,
+    ## warning for n_rows - skips file instead of throwing error
+    m_df <- try(read.table(metrics_file,
                         skip = nskip, sep ="\t", nrows = n_rows,
-                       header =T, stringsAsFactors=F) %>%
+                       header =T, stringsAsFactors=F))
+    if(class(m_df)=='try-error') {
+     warning(paste0(metrics_file, " is empty"))
+     return()
+    }
+    m_df%>%
         dplyr::mutate(accession = .parse_stat_name(metrics_file))
-    return(m_df)
 }
 
 # generating df with metrics data
@@ -265,7 +270,7 @@ load_consensus <- function(consensus_dir, db_con){
         }
 
     }
-    if(!.check_db_table("pur_pooled_join", db_con)){
+    if(!.check_db_table("pur_join", db_con)){
         .pur_plat_join(pur_plat_tbl1 = "pur_miseq_pooled",
                        pur_plat_tbl2 = "pur_pgm_pooled",
                        db_con,
@@ -342,11 +347,11 @@ createPeprDB <- function(db_path,
                          pilon_dir){
     peprDB <- init_peprDB(db_path = db_path,create = TRUE)
     load_peprMeta(param_yaml, db_con = peprDB)
+    # issue with empty files commenting out to test rest of code
     load_metrics(qc_stats_dir, db_con = peprDB)
     load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
     load_consensus(consensus_dir, db_con = peprDB)
-# bug in function need to fix before adding to createPeprDB
     load_purity(purity_dir, db_con = peprDB)
     load_pilon(pilon_dir, db_con = peprDB)
 }
