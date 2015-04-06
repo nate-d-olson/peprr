@@ -33,9 +33,10 @@ Increasingly, high stakes decisions impacting public health and safety are being
 ## Material Description
 RM`r rm_number` is extracted genomic DNA from `r rm_strain`.   
 
-__SPECIFIC TO RM__ strain specific information
-- why the strain was selected
-- Genbank genome sequence reference
+```{r echo = FALSE,child='rm_specific_strain_info.Rmd' }
+## Add text specific to rm regarding strain selection and publically available reference genome sequence
+```
+
 
 Loftstrand Labs[^lofstrand] Limited grew a large batch of `r rm_strain` provided by `r strain_source`  to produce ~ `r (rm_vial_number * 3)/1000` mg of total extracted DNA, divided equally into `r rm_vial_number` vials (Appendix: [Section A][], [Section B][]). Each unit of `r rm_number` is approximately `r rm_mass` ug of extracted genomic DNA in Tris buffer.  The material is stored in 0.5 ml screw cap microcentrifuge tubes (Item number 1405-9710 USA Scientific [^usa]).
 
@@ -158,7 +159,7 @@ kable(low_purity_table(peprDB),
 ```
 
 ```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Bias metrics for low purity positions."}
-low_pur_metrics_figure(db_con)
+low_pur_metrics_figure(peprDB)
 ```
 
 __%%TODO%%__ indel analysis
