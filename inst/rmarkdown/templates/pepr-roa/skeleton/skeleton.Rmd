@@ -189,7 +189,7 @@ homogeneity_freq_figure(peprDB)
 ```
 
 #### Genomic Purity
-```{r echo = FALSE,child='rm_specific_genomic_purity_summary.Rmd' }
+```{r echo = FALSE,child='rm_specific_genomic_purity.Rmd' }
 ## Add text specific to rm regarding genomic purity.
 ```
 ```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Proportion of reads from contaminant DNA."}
