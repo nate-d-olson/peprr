@@ -23,6 +23,16 @@ init_peprDB <- function(data_dir = NULL, db_path = NULL, create = TRUE){
         return(dplyr::src_sqlite(db_path, create = create))
 }
 
+# check to see if table already in databse if so, skips step and prints warning
+# message
+.check_db_table <- function(table, db_con){
+    if(table %in% dplyr::src_tbls(db_con)){
+        warning(paste0(table, " table already in database skip loading"))
+        return(TRUE)
+    }
+    FALSE
+}
+
 ## Metadata --------------------------------------------------------------------
 #' Loads metadata file from pepr pipeline into database
 #' @param metadata yaml file with pipeline metadata
@@ -31,6 +41,9 @@ init_peprDB <- function(data_dir = NULL, db_path = NULL, create = TRUE){
 #' @examples
 #' load_peprMeta("/path/to/metadata.yaml", peprDB)
 load_peprMeta <- function(metadata, db_con){
+    if(.check_db_table("exp_design", db_con)){
+        return()
+    }
     yList <-  yaml::yaml.load_file(metadata)
     # need to figure out what to do with general metadata ....
     ydf <- dplyr::data_frame()
@@ -90,7 +103,9 @@ load_metrics <- function(metrics_dir, db_con){
                        "insert_hist"=list("*insert_size_metric", 10, -1))
     met_df_list <- purrr::map(metric_types, .f = .met_df, metrics_files)
     for(i in names(met_df_list)){
+        if(!.check_db_table(i, db_con)){
         dplyr::copy_to(dest = db_con,df = met_df_list[[i]],name = i, temporary = FALSE)
+        }
     }
 }
 
@@ -116,8 +131,10 @@ load_fastqc <- function(metrics_dir, db_con){
 
     for(i in c("Per_base_sequence_quality","Per_sequence_quality_scores",
                "Sequence_Length_Distribution")){
-        df <- plyr::ldply(read_fastqc,i) %>% dplyr::rename(accession=.id)
-        dplyr::copy_to(dest = db_con,df = df,name = i, temporary = FALSE)
+        if(!.check_db_table(i, db_con)){
+            df <- plyr::ldply(read_fastqc,i) %>% dplyr::rename(accession=.id)
+            dplyr::copy_to(dest = db_con,df = df,name = i, temporary = FALSE)
+        }
     }
 }
 
@@ -127,7 +144,6 @@ load_fastqc <- function(metrics_dir, db_con){
     if(file.info(inputfile)$size == 0){
         warning(paste0("Input file ", inputfile, " is empty"))
     }
-
     report <- read.table(file = inputfile,header = TRUE,
                          sep = "\t",skip = 1,
                          stringsAsFactors = FALSE)
@@ -150,6 +166,9 @@ load_fastqc <- function(metrics_dir, db_con){
 #' @examples
 #' load_purity("/path/to/purity_dir", peprDB)
 load_purity <- function(purity_dir, db_con){
+    if(.check_db_table("purity", db_con)){
+        return()
+    }
     purity_df <- list.files(purity_dir, pattern = "*sam-report.tsv",
                             full.names = TRUE, recursive = TRUE)  %>%
                     plyr::ldply(.parse_sam_report)
@@ -180,6 +199,9 @@ load_purity <- function(purity_dir, db_con){
 #' @examples
 #' load_pilon("/path/to/purity_dir", peprDB)
 load_pilon <- function(pilon_dir, db_con){
+    if(.check_db_table("pilon_changes", db_con)){
+        return()
+    }
     changes_file <- list.files(pilon_dir, pattern = "*changes",
                                 full.names = TRUE, recursive = TRUE)
     if(length(as.vector(changes_file))> 1){
@@ -227,19 +249,30 @@ load_consensus <- function(consensus_dir, db_con){
                                full.names = TRUE)
 
         cb_table <- paste0("cb_",i)
-        .cbtsv_tosql(tsv_file, db_con,cb_table)
+        if(!.check_db_table(cb_table, db_con)){
+            .cbtsv_tosql(tsv_file, db_con,cb_table)
+        }
 
         pur_table <- paste0("pur_",i)
-        .pur_tbl(cb_table, db_con = db_con, pur_table)
+        if(!.check_db_table(pur_table, db_con)){
+            .pur_tbl(cb_table, db_con = db_con, pur_table)
+        }
+
 
         pur_plat_table <- paste0("pur_",i, "_pooled")
-        .pur_plat(pur_table, db_con = db_con, pur_plat_table)
+        if(!.check_db_table(pur_plat_table, db_con)){
+            .pur_plat(pur_table, db_con = db_con, pur_plat_table)
+        }
+
     }
-    .pur_plat_join(pur_plat_tbl1 = "pur_miseq_pooled",
-                  pur_plat_tbl2 = "pur_pgm_pooled",
-                  db_con,
-                  tbl_name = "pur_pooled_join",
-                  plat1_name = "miseq", plat2_name = "pgm")
+    if(!.check_db_table("pur_pooled_join", db_con)){
+        .pur_plat_join(pur_plat_tbl1 = "pur_miseq_pooled",
+                       pur_plat_tbl2 = "pur_pgm_pooled",
+                       db_con,
+                       tbl_name = "pur_pooled_join",
+                       plat1_name = "miseq", plat2_name = "pgm")
+    }
+
 }
 
 
@@ -271,6 +304,10 @@ load_consensus <- function(consensus_dir, db_con){
 #' load_pilon("/path/to/homogeneity_dir", peprDB)
 load_varscan <- function(homogeneity_dir, db_con){
     for(i in c("varscan-indel", "varscan-snp")){
+        tbl_name <- stringr::str_replace(i, "-","_")
+        if(.check_db_table(tbl_name, db_con)){
+            return()
+        }
         file_list <- list.files(homogeneity_dir,
                                 pattern = paste0("*", i, "*"),
                                 full.names = TRUE)
@@ -280,7 +317,7 @@ load_varscan <- function(homogeneity_dir, db_con){
             message(paste0("No rows in ",i," files, not added to database"))
         } else {
         dplyr::copy_to(dest = db_con,df = varscan_df,
-                       name = stringr::str_replace(i, "-","_"),
+                       name = tbl_name,
                        temporary = FALSE)
         }
     }
@@ -308,7 +345,7 @@ createPeprDB <- function(db_path,
     load_metrics(qc_stats_dir, db_con = peprDB)
     load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
-#     load_consensus(consensus_dir, db_con = peprDB)
+    load_consensus(consensus_dir, db_con = peprDB)
 # bug in function need to fix before adding to createPeprDB
     load_purity(purity_dir, db_con = peprDB)
     load_pilon(pilon_dir, db_con = peprDB)
