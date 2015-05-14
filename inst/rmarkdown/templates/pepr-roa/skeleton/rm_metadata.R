@@ -9,5 +9,8 @@ rm_vial_number <- 1500
 strain_source <- "the Food and Drug Administration's Center for Food Safety, who originally received from The Institute for Genomic Research."
 rm_genome_size <- 4.8*10^6
 
+## DNA stability analysis
+source("~/Desktop/dnaStability/stability_roa.Rdata")
+
 # Database location
 db_path <- "~/Desktop/micro_rm/pepr-data/MG001/peprDB.sqlite"
