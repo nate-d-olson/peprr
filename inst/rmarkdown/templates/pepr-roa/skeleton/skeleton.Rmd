@@ -74,6 +74,8 @@ In additional to the sources of error and bias associated with the measurement t
     
 Genomic purity, genome annotation, homopolymer length, and identification of repeat regions are provided as information values and have not been evaluated for sources of bias an error.  The genomic purity of the reference material was assessed using a taxonomic sequence classification algorithm, the accuracy of the method was evaluated using simulated sequence data (Olson et al. _in prep_).  However, sources of bias associated with the measurement, namely accuracy of the database used for taxonomic assignment and the assignment algorithm have not been investigated. Genome annotation is a major field of study within the biological scientific community and represents an unsolved problem in genomics, for well characterized strains such as `r rm_strain` the annotation has been highly curated, however the accuracy of the annotation is unknown. The accuracy of the homopolyer length and repeat region information is dependent on the reference genome sequence and therefore share the same sources of error and bias as the methods used to determine the reference genome sequence.
 
+\pagebreak
+
 # Characterization Process
 ## Sequence Characterization
 ### Sequencing Measurements
@@ -100,6 +102,8 @@ The purity of the reference material in terms of presense of DNA from sources ot
 #### Method Reproducibility
 The methods used to characterize the reference material were developed in a manner to facilitate reuse and ensure computational reproduciblity, obtaining the same results when starting with the same set of measurement data.  To achive this goal the data, computer code, as well as the computing environment were all made publically available.  The raw sequence data is archived at the Genbank Sequence Read Archive ([ncbi.nlm.nih.gov/sra](http://www.ncbi.nlm.nih.gov/sra)), see table 1 in the summary of sequencing data results section for accession numbers.  The code used to characterize the material is available through GitHub as a python bioinformatic program ([github pepr](http://www.github/nate-d-olson/pepr)) and an R package ([github peprr](http://www.github/nate-d-olson/peprr)).  The python bioinformatics pipeline performs the initial sequence analysis and uses a Docker environment for dependencies [docker.org](http://www.docker.com). A flowchat of the bioinformatic pipeline used to characterize the RM can be found in Appendix [Section D][]. The R package, includes functions for loading the output from the bioinformatics pipeline into an sqlite database and generating the summary figures and tables found within this report of analysis.  
 
+\pagebreak
+
 ### Sequence Analysis Results
 #### Summary of Sequencing Datasets
 ```{r echo = FALSE,child='rm_specific_dataset_summary.Rmd' }
@@ -108,11 +112,12 @@ The methods used to characterize the reference material were developed in a mann
 
 __%%TODO%%__ 
 - add coverage to table
-- add pacbio to table
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
 kable(seq_summary_table(peprDB), 
       round = 0, row.names = FALSE, caption = "Summary of sequencing datasets")
 ```
+
+\pagebreak
 
 #### Genome Assembly
 ```{r echo = FALSE,child='rm_specific_assembly_summary.Rmd' }
@@ -141,6 +146,8 @@ kable(pilon_changes_table(peprDB),
       row.names = FALSE,
       caption = "Changes made to reference genome with Pilon")
 ```
+
+\pagebreak
 
 #### Base Level Analysis
 ##### Base Purity
@@ -200,6 +207,7 @@ contam_counts_figure(peprDB, rm_genus)
 contam_heatmap_figure (peprDB, rm_genus)
 ```
 
+\pagebreak
 
 ## DNA Fragment Size Characterization
 ### DNA Fragment Size Stability and Homogeneity
@@ -229,7 +237,9 @@ __%%TODO%%__ DNA fragment homogeneity results
 
 
 #### Stability Study Results
-__%%TODO%%__ DNA fragment stability results
+```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Comparison of DNA proportions for size ranges between control and treatment."}
+stability_tt_heatmap
+```
 
 \pagebreak
 

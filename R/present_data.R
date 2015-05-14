@@ -29,7 +29,7 @@ seq_summary_table <- function(db_con){
 #' @param db_con peprDB connection
 #' @return NULL
 pilon_changes_table <- function(db_con){
-    dplyr::tbl(src = peprDB, from="pilon_changes")  %>%
+    dplyr::tbl(src = db_con, from="pilon_changes")  %>%
         dplyr::collect()
 }
 
