@@ -3,10 +3,13 @@
   # tsv_file generated using vcf2tsv in vcflib
   # db_conn dplyr sqlite db connection
   #tbl_name of table creating in sqlite db
-  vcf <- data.table::fread(tsv_file,sep = "\t",header = TRUE,stringsAsFactors = FALSE)
-  vcf <- dplyr::rename(vcf, PLATDP=DP) # added to fix issue with two DP columns
+
+  vcf <- data.table::fread(tsv_file,sep = "\t",header = TRUE,stringsAsFactors = FALSE) %>%
+            dplyr::rename(vcf, PLATDP=DP) # added to fix issue with two DP columns
   dplyr::copy_to(db_con, vcf, name = tbl_name, temporary = FALSE,
                  indexes = list("CHROM","POS","SAMPLE"))
+  ## removing from workspace
+  rm(vcf)
 }
 
 # Calculating purity and filtering indels
@@ -28,6 +31,7 @@
            Alt = Alt_For + Alt_Rev,
            Pur = Ref/(Ref+ Alt))
   dplyr::copy_to(db_con, vcf_dp4, name=tbl_name,temporary = FALSE, indexes = list("CHROM","POS","SAMPLE"))
+  rm(vcf_dp4)
 }
 
 # Generating purity by platform summary
@@ -53,4 +57,5 @@
   # may want to change to outer_join later
   dplyr::inner_join(plat1_tbl, plat2_tbl) %>%
       dplyr::compute(name="pur_join", temporary = FALSE)
+  rm(plat1_tbl, plat2_tbl)
 }
