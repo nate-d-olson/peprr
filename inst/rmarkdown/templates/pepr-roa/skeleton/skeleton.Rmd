@@ -33,7 +33,7 @@ Increasingly, high stakes decisions impacting public health and safety are being
 ## Material Description
 RM`r rm_number` is extracted genomic DNA from `r rm_strain`.   
 
-```{r echo = FALSE,child='rm_specific_strain_info.Rmd' }
+```{r echo = FALSE,child='rm_strain_selection_info.Rmd' }
 ## Add text specific to rm regarding strain selection and publically available reference genome sequence
 ```
 
