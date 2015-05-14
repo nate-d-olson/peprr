@@ -179,6 +179,7 @@ load_purity <- function(purity_dir, db_con){
                     plyr::ldply(.parse_sam_report)
     dplyr::copy_to(dest = db_con,df = purity_df,
                    name = "purity", temporary = FALSE)
+    rm(purity_df)
 }
 
 
@@ -263,12 +264,10 @@ load_consensus <- function(consensus_dir, db_con){
             .pur_tbl(cb_table, db_con = db_con, pur_table)
         }
 
-
         pur_plat_table <- paste0("pur_",i, "_pooled")
         if(!.check_db_table(pur_plat_table, db_con)){
             .pur_plat(pur_table, db_con = db_con, pur_plat_table)
         }
-
     }
     if(!.check_db_table("pur_join", db_con)){
         .pur_plat_join(pur_plat_tbl1 = "pur_miseq_pooled",
@@ -277,7 +276,6 @@ load_consensus <- function(consensus_dir, db_con){
                        tbl_name = "pur_pooled_join",
                        plat1_name = "miseq", plat2_name = "pgm")
     }
-
 }
 
 
@@ -321,9 +319,9 @@ load_varscan <- function(homogeneity_dir, db_con){
         if(nrow(varscan_df)== 0){
             message(paste0("No rows in ",i," files, not added to database"))
         } else {
-        dplyr::copy_to(dest = db_con,df = varscan_df,
-                       name = tbl_name,
-                       temporary = FALSE)
+            dplyr::copy_to(dest = db_con,df = varscan_df,
+                            name = tbl_name,
+                            temporary = FALSE)
         }
     }
 }
