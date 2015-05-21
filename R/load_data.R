@@ -208,7 +208,8 @@ load_pilon <- function(pilon_dir, db_con){
     if(.check_db_table("pilon_changes", db_con)){
         return()
     }
-    changes_file <- list.files(pilon_dir, pattern = "*changes",
+    # added miseq to file search need to change to analyze multiple platforms without hard coding platform
+    changes_file <- list.files(pilon_dir, pattern = "*miseq.changes",
                                 full.names = TRUE, recursive = TRUE)
     if(length(as.vector(changes_file))> 1){
         warning("more than one pilon changes file in directory skipping loading into database")
@@ -216,11 +217,17 @@ load_pilon <- function(pilon_dir, db_con){
         warning("no changes file in pilon directory")
     }else {
         changes_col_names <- c("chrom_ref", "chrom_pilon","seq_ref","seq_pilon")
+        #try using fill = TRUE to fix issue with unequal number of columns in rows
         changes_df <- read.table(file = changes_file, header = FALSE, sep = " ",
                                  col.names = changes_col_names,
-                                 stringsAsFactors = FALSE) %>%
-                        tidyr::separate(col = chrom_ref, into = c("chrom_ref","coord_ref"), sep = ":") %>%
-                        tidyr::separate(col = chrom_pilon, into = c("chrom_pilon","coord_pilon"), sep = ":")
+                                 stringsAsFactors = FALSE)
+        if(nrow(changes_df)== 0){
+            warning("no changes in pilon changes file")
+            return()
+        }
+        changes_df %>%
+            tidyr::separate(col = chrom_ref, into = c("chrom_ref","coord_ref"), sep = ":") %>%
+            tidyr::separate(col = chrom_pilon, into = c("chrom_pilon","coord_pilon"), sep = ":")
         dplyr::copy_to(dest = db_con,df = changes_df,
                        name = "pilon_changes", temporary = FALSE)
     }
@@ -250,6 +257,8 @@ load_pilon <- function(pilon_dir, db_con){
 load_consensus <- function(consensus_dir, db_con){
     # error with input file for fread
     for(i in c("miseq", "pgm")){
+        # need to add pacbio - change to read platforms from input metadata file
+        # workout method to load using less RAM
         tsv_file <- list.files(consensus_dir,
                                pattern = paste0("*",i,".tsv"),
                                full.names = TRUE)
@@ -292,8 +301,13 @@ load_consensus <- function(consensus_dir, db_con){
     df <- read.table(file, sep ="\t",
                      header = T, stringsAsFactors = F)
     if(nrow(df)== 0){
+        ds_names <- .parse_varscan_filename(file)
+        df$normal <- character(0)
+        df$tumor <- character(0)
+        # added line to try and fix bug with df[1,] <- rep(NA, length(colnames(df)))
         return(df)
     }
+    df$var <- as.character(df$var)
     ds_names <- .parse_varscan_filename(file)
     df$normal <- ds_names[1]; df$tumor <- ds_names[2]
     df
@@ -315,7 +329,7 @@ load_varscan <- function(homogeneity_dir, db_con){
                                 pattern = paste0("*", i, "*"),
                                 full.names = TRUE)
         varscan_df <- purrr::map(.x = file_list, .f = .read_varscan) %>%
-                        dplyr::rbind_all()
+                        dplyr::bind_rows()
         if(nrow(varscan_df)== 0){
             message(paste0("No rows in ",i," files, not added to database"))
         } else {
@@ -345,7 +359,6 @@ createPeprDB <- function(db_path,
                          pilon_dir){
     peprDB <- init_peprDB(db_path = db_path,create = TRUE)
     load_peprMeta(param_yaml, db_con = peprDB)
-    # issue with empty files commenting out to test rest of code
     load_metrics(qc_stats_dir, db_con = peprDB)
     load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
