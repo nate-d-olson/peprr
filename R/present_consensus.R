@@ -14,11 +14,11 @@
 }
 
 purity_scatter_plot <- function (db_con, plat1_name = "Miseq", plat2_name = "PGM") {
+    chrom_names <- .get_chrom_names(db_con)
     dplyr::tbl(db_con, "pur_join") %>%
         dplyr::filter(plat1 < 0.98 | plat2 < 0.98,
-                      CHROM %in% .get_chrom_names(db_con)) %>%
+                      CHROM %in% chrom_names) %>%
         dplyr::collect() %>%
-        dplyr::filter(CHROM %in% grep("novel", CHROM, value = TRUE, invert = TRUE)) %>%
         ggplot2::ggplot() +
             ggplot2::geom_point(ggplot2::aes(x = plat1, y = plat2),
                                 alpha = 0.5) +
@@ -26,9 +26,10 @@ purity_scatter_plot <- function (db_con, plat1_name = "Miseq", plat2_name = "PGM
 }
 
 low_purity_table <- function(db_con){
+    chrom_names <- .get_chrom_names(db_con)
     low_pur <- dplyr::tbl(db_con, "pur_join") %>%
         dplyr::filter(plat1 < 0.98 | plat2 < 0.98,
-                      CHROM %in% .get_chrom_names(db_con)) %>%
+                      CHROM %in% chrom_names) %>%
         dplyr::collect() %>%
         dplyr::select(-plat1, -plat2)
 
