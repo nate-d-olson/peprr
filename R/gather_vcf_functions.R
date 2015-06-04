@@ -5,7 +5,7 @@
   #tbl_name of table creating in sqlite db
 
   vcf <- data.table::fread(tsv_file,sep = "\t",header = TRUE,stringsAsFactors = FALSE) %>%
-            dplyr::rename(PLATDP=DP) # added to fix issue with two DP columns
+            dplyr::rename("PLATDP"=DP) # added to fix issue with two DP columns
   dplyr::copy_to(db_con, vcf, name = tbl_name, temporary = FALSE,
                  indexes = list("CHROM","POS","SAMPLE"))
   ## removing from workspace
