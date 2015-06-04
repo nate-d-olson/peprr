@@ -143,6 +143,29 @@ load_fastqc <- function(metrics_dir, db_con){
     }
 }
 
+## Coverage
+#' Per sample coverage
+#'
+#' @param db_con
+#' @param platforms
+#'
+#' @return
+#' @export
+#'
+#' @examples
+coverage_table <- function (db_con, platforms = c("miseq","pgm")){
+  cov_df <- dplyr::data_frame()
+  for(plat in platforms){
+      tbl_name <- pate0("cb_", plat)
+      plat_cov <- dplyr::tbl(src = db_con, from =tbl_name) %>%
+          dplyr::group_by(SAMPLE) %>%
+          dplyr::summarise(COV = median(DP)) %>%
+          dplyr::collect()
+      cov_df <- dplyr::bind_rows(cov_dt, plat_cov)
+  }
+  dplyr::copy_to(dest = db_con,df = cov_df,name = "coverage", temporary = FALSE)
+}
+
 #### Purity --------------------------------------------------------------------
 .parse_sam_report <- function(inputfile){
     # 'Parse pathoscope sam-report.tsv output files from pathoscope'
@@ -254,9 +277,9 @@ load_pilon <- function(pilon_dir, db_con){
 #' @return NULL
 #' @examples
 #' load_consensus("/path/to/purity_dir", peprDB)
-load_consensus <- function(consensus_dir, db_con){
+load_consensus <- function(consensus_dir, db_con, platforms = c("miseq", "pgm")){
     # error with input file for fread
-    for(i in c("miseq", "pgm")){
+    for(i in platforms){
         # need to add pacbio - change to read platforms from input metadata file
         # workout method to load using less RAM
         tsv_file <- list.files(consensus_dir,
@@ -363,6 +386,7 @@ createPeprDB <- function(db_path,
     load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
     load_consensus(consensus_dir, db_con = peprDB)
+    coverage_table(db_con)
     load_purity(purity_dir, db_con = peprDB)
     load_pilon(pilon_dir, db_con = peprDB)
 }
