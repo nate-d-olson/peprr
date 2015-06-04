@@ -156,7 +156,7 @@ load_fastqc <- function(metrics_dir, db_con){
 coverage_table <- function (db_con, platforms = c("miseq","pgm")){
   cov_df <- dplyr::data_frame()
   for(plat in platforms){
-      tbl_name <- pate0("cb_", plat)
+      tbl_name <- paste0("cb_", plat)
       plat_cov <- dplyr::tbl(src = db_con, from =tbl_name) %>%
           dplyr::group_by(SAMPLE) %>%
           dplyr::summarise(COV = median(DP)) %>%
