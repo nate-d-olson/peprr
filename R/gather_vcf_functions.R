@@ -4,8 +4,14 @@
   # db_conn dplyr sqlite db connection
   #tbl_name of table creating in sqlite db
 
-  vcf <- data.table::fread(tsv_file,sep = "\t",header = TRUE,stringsAsFactors = FALSE) %>%
-            dplyr::rename("PLATDP"=DP) # added to fix issue with two DP columns
+  ## new column headers to deal with DP used twice in vcf
+  vcf_cols <- readLines(tsv_file, n = 1) %>%
+      stringr::str_replace("DP", "PLATDP") %>%
+      stringr::str_split("\t") %>% unlist()
+  vcf <- data.table::fread(tsv_file,sep = "\t",
+                           header = FALSE, skip = 1,
+                           stringsAsFactors = FALSE) %>%
+            data.table::setnames(colnames(.), vcf_cols)
   dplyr::copy_to(db_con, vcf, name = tbl_name, temporary = FALSE,
                  indexes = list("CHROM","POS","SAMPLE"))
   ## removing from workspace
