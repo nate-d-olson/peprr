@@ -12,7 +12,7 @@
 
 purity_scatter_plot <- function (db_con, plat1_name = "Miseq", plat2_name = "PGM") {
     dplyr::tbl(db_con, "pur_join") %>%
-        dplyr::filter(plat1 < 0.98 | plat2 < 0.98) %>%
+        dplyr::filter(plat1 < 0.98 | plat2 < 0.98, CHROM != "pilon_novel_001" ) %>%
         dplyr::collect() %>%
         dplyr::filter(CHROM %in% grep("novel", CHROM,value = TRUE,invert = TRUE)) %>%
         ggplot2::ggplot() +
@@ -23,7 +23,7 @@ purity_scatter_plot <- function (db_con, plat1_name = "Miseq", plat2_name = "PGM
 
 low_purity_table <- function(db_con){
     low_pur <- dplyr::tbl(db_con, "pur_join") %>%
-        dplyr::filter(plat1 < 0.98, plat2 < 0.98) %>% dplyr::collect() %>%
+        dplyr::filter(plat1 < 0.98, plat2 < 0.98, CHROM != "pilon_novel_001" ) %>% dplyr::collect() %>%
         dplyr::select(-plat1, -plat2)
     low_miseq <- dplyr::tbl(db_con, "pur_miseq_pooled") %>%
                     dplyr::filter(CHROM %in% low_pur$CHROM,
@@ -35,7 +35,7 @@ low_purity_table <- function(db_con){
                       POS %in% low_pur$POS) %>%
         dplyr::collect()  %>%
         dplyr::right_join(low_pur)
-    low_join <- left_join(low_miseq, low_pgm, by = c("CHROM", "POS"))
+    low_join <- dplyr::left_join(low_miseq, low_pgm, by = c("CHROM", "POS"))
     names(low_join) <- names(low_join) %>%
         stringr::str_replace_all("x","miseq") %>%
         stringr::str_replace_all("y","pgm")
