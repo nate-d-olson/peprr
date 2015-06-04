@@ -3,10 +3,10 @@ title: "NIST Micro RM ROA Template"
 author: "Nathan D. Olson"
 date: "March 20, 2015"
 output:
+  html_document: default
   pdf_document:
     latex_engine: xelatex
     toc: yes
-  html_document: default
   toc: yes
 bibliography: micro_rm_references.bib
 ---
@@ -160,16 +160,15 @@ purity_scatter_plot(peprDB)
 ```
 
 ```{r echo =FALSE, message=FALSE, warning=FALSE}
+# not sure how much this table really adds - excluding for now
 kable(low_purity_table(peprDB), 
-      row.names = FALSE,
+      row.names = FALSE,round = 2,
       caption = "Positions with base level purity values less than 98% for both platforms.")
 ```
 
-```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Bias metrics for low purity positions."}
+```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Bias metrics for low purity positions.", message=FALSE, warning=FALSE}
 low_pur_metrics_figure(peprDB)
 ```
-
-__%%TODO%%__ indel analysis
 
 ##### Sequence homogeneity
 ```{r echo = FALSE,child='rm_specific_base_level_homogeneity_summary.Rmd' }
@@ -183,11 +182,11 @@ kable(homogeneity_sig_table(peprDB, rename_cols = TRUE),
 ```
 
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Distirbution of pairwise variant call p-values."}
-homogeneity_pvalue_figure(peprDB)
+#homogeneity_pvalue_figure(peprDB)
 ```
 
 ```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Observed of variant frequency for pairwise variants."}
-homogeneity_freq_figure(peprDB)
+#homogeneity_freq_figure(peprDB)
 ```
 
 ##### Genome Annotation
@@ -204,7 +203,7 @@ contam_counts_figure(peprDB, rm_genus)
 ```
 
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.height = 6, fig.cap= "Breakdown of contaminants by organism.",fig.retina=TRUE}
-contam_heatmap_figure (peprDB, rm_genus)
+contam_point_line_figure(peprDB, rm_genus)
 ```
 
 \pagebreak
@@ -238,7 +237,7 @@ __%%TODO%%__ DNA fragment homogeneity results
 
 #### Stability Study Results
 ```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Comparison of DNA proportions for size ranges between control and treatment."}
-stability_tt_heatmap
+#stability_tt_heatmap
 ```
 
 \pagebreak
