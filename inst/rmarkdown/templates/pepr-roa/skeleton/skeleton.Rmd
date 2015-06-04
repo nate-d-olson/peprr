@@ -142,9 +142,10 @@ grid.raster(readPNG("opgen_assembly_comparison.png"))
 ```
 
 ```{r echo =FALSE, message=FALSE, warning=FALSE}
-kable(pilon_changes_table(peprDB), 
-      row.names = FALSE,
-      caption = "Changes made to reference genome with Pilon")
+## need a better way to present this information
+#kable(pilon_changes_table(peprDB), 
+#      row.names = FALSE,
+#      caption = "Changes made to reference genome with Pilon")
 ```
 
 \pagebreak
@@ -198,7 +199,7 @@ kable(homogeneity_sig_table(peprDB, rename_cols = TRUE),
 ```{r echo = FALSE,child='rm_specific_genomic_purity.Rmd' }
 ## Add text specific to rm regarding genomic purity.
 ```
-```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Proportion of reads from contaminant DNA."}
+```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Proportion of reads from contaminant DNA.", warning=FALSE, message=FALSE}
 contam_counts_figure(peprDB, rm_genus)
 ```
 
