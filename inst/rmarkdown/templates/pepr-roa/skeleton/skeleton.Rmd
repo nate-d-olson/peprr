@@ -31,8 +31,6 @@ peprDB <- dplyr::src_sqlite(db_path)
 Increasingly, high stakes decisions impacting public health and safety are being made using microbial genomic sequencing data [@Tang2014]. For example, whole genome sequencing was recently used as part of an investigation of the European 2011 Escherichia coli O1O4:H4 sprout associated outbreak [@Grad2012]. As the stakes increase so does the required level of confidence in the measurement. This reference material as well as three other microbial genomic DNA RM8375-8378 were developed to help advance the measurement assurance of microbial genomic sequencing and DNA sequencing in general. The development of these reference material was supported through an Interagency agreement with the Food and Drug Administration's Center for Devices, for use in validating DNA sequencing platforms for clinical applications.
 
 ## Material Description
-RM`r rm_number` is extracted genomic DNA from `r rm_strain`.   
-
 ```{r echo = FALSE,child='rm_strain_selection_info.Rmd' }
 ## Add text specific to rm regarding strain selection and publically available reference genome sequence
 ```
@@ -52,7 +50,7 @@ The intended use of `r rm_number` is to help assess performance of high-throughp
 1. DNA sequencing and data analysis method validation and quality control as part of a laboratory quality control program;     
 2. microbial genome sequencing for DNA sequencing including genome assembly, read mapping based variant calling methods.   
 
-The genomic DNA is intended to be analyzed in the same way as any other sample a laboratory would analyze extracted DNA, such as through the use of a genome assembly or variant calling bioinformatic pipeline (Fig. 1).  Because the RM is extracted DNA, it does not assess pre-analytical steps such as DNA extraction. It does however, challenge sequencing library preparation, sequencing machines, base calling algorithms, and the subsequent bioinformatic analysis.  This RM is not intended to assess bioinformatics steps such as strain identificaiton, phylogenetic analysis, or genome annotation. It is important to recognize the genome sequence is “Reference Value” rather than “Certified Value” because we were not yet fully confident that we accounted for all known biases.  However, we evaluated the individual base calls and genome assembly for a number of known sources of bias, e.g. repeat regions, and included additional information regarding these sources of bias (see vcf and gff files). 
+The genomic DNA is intended to be analyzed in the same way as any other sample a laboratory would analyze extracted DNA, such as through the use of a genome assembly or variant calling bioinformatic pipeline (Fig. 1).  Because the RM is extracted DNA, it does not assess pre-analytical steps such as DNA extraction. It does however, challenge sequencing library preparation, sequencing machines, base calling algorithms, and the subsequent bioinformatic analysis.  This RM is not intended to assess bioinformatics steps such as strain identificaiton, phylogenetic analysis, or genome annotation. It is important to recognize the genome sequence is provided as an “Information Value” rather than “Certified Value” because we were not yet fully confident that we accounted for all known biases.  However, we evaluated the individual base calls and genome assembly for a number of known sources of bias, e.g. repeat regions, and included additional information regarding these sources of bias (see vcf and gff files). 
 
 ```{r echo = FALSE, fig.width = 6, fig.align='center', fig.cap= "Generic measurement process for genome assembly and variant calling intended use cases.  For sequencing quality control the results from the sequencing step would be compared to the reference material genome sequence to determine base level sequencing accuracy."}
 grid.raster(readPNG("measurement_process.png"))
@@ -154,7 +152,7 @@ grid.raster(readPNG("opgen_assembly_comparison.png"))
 ## Add text specific to rm regarding general summary of base level purity.
 ```
 
-```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Comparison of base purity values for PGM and MiSeq."}
+```{r echo = FALSE, message = FALSE, warning=FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Comparison of base purity values for PGM and MiSeq."}
 purity_scatter_plot(peprDB)
 ```
 
