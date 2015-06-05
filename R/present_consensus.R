@@ -13,16 +13,18 @@
         grep("novel", ., invert = TRUE, value = TRUE)
 }
 
-purity_scatter_plot <- function (db_con, plat1_name = "Miseq", plat2_name = "PGM") {
+purity_scatter_plot <- function (db_con,
+                                 plat1_name = "Miseq",
+                                 plat2_name = "PGM") {
     chrom_names <- .get_chrom_names(db_con)
     dplyr::tbl(db_con, "pur_join") %>%
-        dplyr::filter(plat1 < 0.98 | plat2 < 0.98,
-                      CHROM %in% chrom_names) %>%
+        dplyr::filter(CHROM %in% chrom_names,
+                      (plat1 < 0.99 | plat2 < 0.99)) %>%
         dplyr::collect() %>%
         ggplot2::ggplot() +
             ggplot2::geom_point(ggplot2::aes(x = plat1, y = plat2),
                                 alpha = 0.5) +
-            ggplot2::labs(x = "MiSeq", y = "PGM") + ggplot2::theme_bw()
+            ggplot2::labs(x = plat1_name, y = plat2_name) + ggplot2::theme_bw()
 }
 
 low_purity_table <- function(db_con){
@@ -63,13 +65,16 @@ low_purity_table <- function(db_con){
         dplyr::summarise_each(dplyr::funs(mean))
 }
 
-low_pur_metrics <- function(db_con){
+low_pur_metrics <- function(db_con, n = 10){
     chrom_names <- .get_chrom_names(db_con)
     low_pur <- dplyr::tbl(db_con, "pur_join") %>%
-        dplyr::filter(plat1 < 0.98, plat2 < 0.98,
-            CHROM %in% chrom_names) %>%
-        dplyr::collect() %>%
-        dplyr::select(-plat1, -plat2)
+        dplyr::filter(plat1 < 0.99, plat2 < 0.99,
+                      CHROM %in% chrom_names) %>%
+        dplyr::collect() %>% dplyr::group_by(CHROM, POS) %>%
+        dplyr::mutate(av_pur = (plat1 + plat2)/2) %>%
+        dplyr::ungroup() %>%
+        dplyr::top_n(n,-av_pur) %>%
+        dplyr::select(-plat1, -plat2, av_pur)
     low_miseq <- dplyr::tbl(db_con, "cb_miseq") %>%
         .get_low_pur_metrics(low_pur) %>%
         dplyr::mutate(plat = "miseq")
@@ -79,8 +84,8 @@ low_pur_metrics <- function(db_con){
     dplyr::bind_rows(low_miseq, low_pgm)
 }
 
-low_pur_metrics_figure <- function(db_con){
-    low_pur_metrics(db_con) %>% tidyr::gather("metric","value", 3:7) %>%
+low_pur_metrics_figure <- function(db_con, n = 5){
+    low_pur_metrics(db_con, n) %>% tidyr::gather("metric","value", 3:7) %>%
         ggplot2::ggplot() +
             ggplot2::geom_point(ggplot2::aes(x = as.character(POS),
                                              y = value, color = plat)) +
@@ -91,7 +96,7 @@ low_pur_metrics_figure <- function(db_con){
 }
 
 ### Homogeneity figure
-homogeneity_point_line_figure <- function(db_con, platforms = c("miseq","pgm")){
+homogeneity_point_line_figure <- function(db_con, n = 5, platforms = c("miseq","pgm")){
     chrom_names <- .get_chrom_names(db_con)
     low_pur <- dplyr::tbl(db_con, "pur_join") %>%
         dplyr::filter(plat1 < 0.99, plat2 < 0.99,
@@ -99,7 +104,7 @@ homogeneity_point_line_figure <- function(db_con, platforms = c("miseq","pgm")){
         dplyr::collect() %>% dplyr::group_by(CHROM, POS) %>%
         dplyr::mutate(av_pur = (plat1 + plat2)/2) %>%
         dplyr::ungroup() %>%
-        dplyr::top_n(5,-av_pur) %>%
+        dplyr::top_n(n,-av_pur) %>%
         dplyr::select(-plat1, -plat2, av_pur)
 
     low_pos_df <- dplyr::data_frame()
