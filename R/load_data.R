@@ -161,7 +161,7 @@ coverage_table <- function (db_con, platforms = c("miseq","pgm")){
           dplyr::group_by(SAMPLE) %>%
           dplyr::summarise(COV = median(DP)) %>%
           dplyr::collect()
-      cov_df <- dplyr::bind_rows(cov_dt, plat_cov)
+      cov_df <- dplyr::bind_rows(cov_df, plat_cov)
   }
   dplyr::copy_to(dest = db_con,df = cov_df,name = "coverage", temporary = FALSE)
 }
