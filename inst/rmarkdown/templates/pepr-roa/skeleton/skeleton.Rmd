@@ -110,8 +110,6 @@ The methods used to characterize the reference material were developed in a mann
 ## Add text specific to rm regarding general summary of sequencing datasets.
 ```
 
-__%%TODO%%__ 
-- add coverage to table
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
 kable(seq_summary_table(peprDB), 
       round = 0, row.names = FALSE, caption = "Summary of sequencing datasets")
@@ -161,10 +159,10 @@ purity_scatter_plot(peprDB)
 ```
 
 ```{r echo =FALSE, message=FALSE, warning=FALSE}
-# not sure how much this table really adds - excluding for now
-kable(low_purity_table(peprDB), 
-      row.names = FALSE,round = 2,
-      caption = "Positions with base level purity values less than 98% for both platforms.")
+## not sure how much this table really adds - excluding for now
+# kable(low_purity_table(peprDB), 
+#       row.names = FALSE,round = 2,
+#       caption = "Positions with base level purity values less than 98% for both platforms.")
 ```
 
 ```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Bias metrics for low purity positions.", message=FALSE, warning=FALSE}
