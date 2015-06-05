@@ -90,6 +90,44 @@ low_pur_metrics_figure <- function(db_con){
             ggplot2::labs(x = "Position", color = "Platform")
 }
 
+### Homogeneity figure
+homogeneity_point_line_figure <- function(db_con, platforms = c("miseq","pgm")){
+    chrom_names <- .get_chrom_names(db_con)
+    low_pur <- dplyr::tbl(db_con, "pur_join") %>%
+        dplyr::filter(plat1 < 0.99, plat2 < 0.99,
+                      CHROM %in% chrom_names) %>%
+        dplyr::collect() %>% dplyr::group_by(CHROM, POS) %>%
+        dplyr::mutate(av_pur = (plat1 + plat2)/2) %>%
+        dplyr::ungroup() %>%
+        dplyr::top_n(5,-av_pur) %>%
+        dplyr::select(-plat1, -plat2, av_pur)
+
+    low_pos_df <- dplyr::data_frame()
+    for(plat in platforms){
+        tbl_name <- paste0("pur_",plat)
+        low_pos_df <- dplyr::tbl(src = db_con, from = tbl_name) %>%
+                        #just to make more manageable before collecting
+                        dplyr::filter(POS %in% low_pur$POS) %>%
+                        dplyr::collect() %>%
+                        dplyr::right_join(low_pur) %>%
+                        dplyr::bind_rows(low_pos_df)
+    }
+    meta <- dplyr::tbl(src = db_con, from = "exp_design") %>%
+                dplyr::collect()
+
+    low_pos_df %>%
+        dplyr::left_join(meta, by = c("SAMPLE"="accession")) %>%
+        dplyr::mutate(plat_rep = paste0(plat, "\n", rep)) %>%
+        ggplot2::ggplot() +
+            ggplot2::geom_line(ggplot2::aes(x = plat_rep, y = Pur, group = vial),
+                               color = "grey80") +
+            ggplot2::geom_point(ggplot2::aes(x = plat_rep, y = Pur,
+                                         color = as.factor(vial))) +
+            ggplot2::theme_bw() + ggplot2::facet_wrap(~POS, nrow = 1) +
+            ggplot2::theme(legend.position = "none")+
+            ggplot2::labs(x = "Library", y = "Purity")
+}
+
 
 gel_indel_metrics <- function(df){
      df %>% dplyr::filter(INDEL != 0) %>%
