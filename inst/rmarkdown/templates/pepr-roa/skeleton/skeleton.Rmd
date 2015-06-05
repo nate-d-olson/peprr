@@ -180,12 +180,8 @@ kable(homogeneity_sig_table(peprDB, rename_cols = TRUE),
       caption = "Pairwise variant analysis results")
 ```
 
-```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Distirbution of pairwise variant call p-values."}
-#homogeneity_pvalue_figure(peprDB)
-```
-
-```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Observed of variant frequency for pairwise variants."}
-#homogeneity_freq_figure(peprDB)
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Among sample variation in purity values."}
+homogeneity_point_line_figure(peprDB)
 ```
 
 ##### Genome Annotation
