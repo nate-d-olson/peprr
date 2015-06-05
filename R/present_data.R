@@ -18,14 +18,19 @@ seq_summary_table <- function(db_con){
         dplyr::collect()  %>%
         tidyr::separate(accession, c("ref","pilon", "accession"), sep = "_")
 
+    coverage_tbl <- dplyr::tbl(src = db_con, from="coverage") %>%
+        dplyr::rename("accession"=SAMPLE) %>%
+        dplyr::collect()
+
     dplyr::tbl(src = db_con, from ="exp_design")  %>%
         dplyr::collect() %>% dplyr::full_join(seq_metrics) %>%
         dplyr::full_join(insert_tbl) %>%
+        dplyr::full_join(coverage_tbl) %>%
         dplyr::select(-ref, -pilon,-CATEGORY) %>%
         dplyr::rename("Accession" = accession, "Platform" = plat,
                       "Vial" = vial, "Replicate" = rep,
                       "Reads"= TOTAL_READS, "Read Length" = MEAN_READ_LENGTH,
-                      "Insert Size"=mean_insert)
+                      "Insert Size"=mean_insert, "Coverage"= COV)
 }
 
 #### Pilon Changes -------------------------------------------------------------
