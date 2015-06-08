@@ -10,7 +10,7 @@ strain_source <- "the Food and Drug Administration's Center for Food Safety, who
 rm_genome_size <- 4.8*10^6
 
 ## DNA stability analysis
-source("~/Desktop/dnaStability/stability_roa.Rdata")
+#source("~/Desktop/dnaStability/stability_roa.Rdata")
 
 # Database location
-db_path <- "~/Desktop/micro_rm/pepr-data/MG001/peprDB.sqlite"
+db_path <- "/Volumes/NDO_PROJECT/current_projects/micro_rm/micro_rm/pepr-data/MG001/Re.Order.CFSAN008157.HGAP_miseq.sqlite"

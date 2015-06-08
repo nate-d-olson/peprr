@@ -152,7 +152,7 @@ grid.raster(readPNG("opgen_assembly_comparison.png"))
 ## Add text specific to rm regarding general summary of base level purity.
 ```
 
-```{r echo = FALSE, message = FALSE, warning=FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Comparison of base purity values for PGM and MiSeq."}
+```{r echo = FALSE, message = FALSE, warnings = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Comparison of base purity values for PGM and MiSeq."}
 purity_scatter_plot(peprDB)
 ```
 
@@ -163,7 +163,7 @@ purity_scatter_plot(peprDB)
 #       caption = "Positions with base level purity values less than 98% for both platforms.")
 ```
 
-```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Bias metrics for low purity positions.", message=FALSE, warning=FALSE}
+```{r echo = FALSE, fig.align='center', fig.height = 7, fig.show = 'asis', fig.cap= "Bias metrics for low purity positions.", message=FALSE, warning=FALSE}
 low_pur_metrics_figure(peprDB)
 ```
 
@@ -236,11 +236,14 @@ __%%TODO%%__ DNA fragment homogeneity results
 \pagebreak
 
 # Appendix
-
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.cap= "Certificate of analysis provided by the reference material manufacturer."}
 # __SPECIFIC TO RM__
 grid.raster(readPNG("Lofstrand_certificate_of_analysis.png"))
 ```
+
+# ```{r echo = FALSE,child='rm_specific_vial_pull.Rmd' }
+# ## Information about rm random vial selection
+# ```
 
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.width=3, fig.height=3, fig.align='center', fig.cap= "RM tube label"}
 # __SPECIFIC TO RM__
