@@ -383,7 +383,8 @@ createPeprDB <- function(db_path,
     peprDB <- init_peprDB(db_path = db_path,create = TRUE)
     load_peprMeta(param_yaml, db_con = peprDB)
     load_metrics(qc_stats_dir, db_con = peprDB)
-    load_fastqc(qc_stats_dir, db_con = peprDB)
+    #commenting out fastqc data not used in summary table, issues with Pacbio data
+    #load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
     load_consensus(consensus_dir, db_con = peprDB)
     coverage_table(db_con)
