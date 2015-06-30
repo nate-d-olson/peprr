@@ -25,7 +25,7 @@
   # table creating in sqlite db select desired columns and filtering indels
   vcf_dp4 <-dplyr::tbl(src = db_con, from = vcf_tbl)  %>%
     dplyr::select(CHROM, POS, SAMPLE, INDEL, DP, DP4, SP) %>%
-    filter(INDEL==0) %>% dplyr::collect()
+    filter(INDEL== "0") %>% dplyr::collect()
 
   vcf_dp4 <- vcf_dp4  %>%
     tidyr::separate(DP4, c("Ref_For","Ref_Rev","Alt_For","Alt_Rev")) %>%
