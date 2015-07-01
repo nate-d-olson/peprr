@@ -149,10 +149,10 @@ load_fastqc <- function(metrics_dir, db_con){
 #' @param db_con
 #' @param platforms
 #'
-#' @return
+#' @return adds coverage table to db
 #' @export
 #'
-#' @examples
+#' @examples coverage_table(peprDB)
 coverage_table <- function (db_con, platforms = c("miseq","pgm")){
   cov_df <- dplyr::data_frame()
   for(plat in platforms){
@@ -387,7 +387,7 @@ createPeprDB <- function(db_path,
     #load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
     load_consensus(consensus_dir, db_con = peprDB)
-    coverage_table(db_con)
+    coverage_table(db_con = peprDB)
     load_purity(purity_dir, db_con = peprDB)
     load_pilon(pilon_dir, db_con = peprDB)
 }
