@@ -197,39 +197,38 @@ contam_point_line_figure(peprDB, rm_genus)
 
 \pagebreak
 
-## DNA Fragment Size Characterization
-### DNA Fragment Size Stability and Homogeneity
-`r rm_number` is homogeneous and stable under the recommended storage conditions, although there is evidence that DNA fragment size may change over time, as indicated by the confidence of reviewers.  Samples were exposed to aging and handling conditions outside those recommended for normal use in a controlled experimental setting.  The results of these experiments indicate the only variability in unit-to-unit stability may come after advanced aging.  No other observable differences were observed for handling or storage conditions.
-The examination of several vials of material across the lot allocation by PFGE constitutes the homogeneity study for this material; no inhomogeneity is observed from unit-to-unit.
+## DNA Fragment Size Stability
+`r rm_number` is stable under the recommended storage conditions, although there is evidence that DNA fragment size may change over time, as indicated by the accelerated aging study.  Samples were exposed to aging outside those recommended for normal use in a controlled experimental setting.  The results of this experiments indicate the degradation, or fragmentation, of the DNA may come after advanced aging. 
 
-### Description of Homogeneity/Stability Study
-Vials of RM material were selected at random to assess homogeneity and stability of the DNA.  For homogeneity measurements this included the first and last pooled aliquot as well as random vials from regular intervals across the lot.  For the stability study, a random number generator was used to determine the vials to measure.
+### Description of Stability Study
+Vials of RM material were selected at random to assess stability of the DNA, in terms of the distribution of the molecular weight of the DNA.  For the stability study, a random number generator was used to determine the vials to measure.
 
-An isochronous stability study was performed to ensure integrity of DNA fragment size for candidate `r rm_number`over a variety of storage and handling conditions.  Figure **XVZ** shows the design of the study, including the experimental treatments for each condition studied.  Two time courses and three handling conditionswere used to mimic accelerated aging, recommended storage conditions and normal laboratory processing.
+An isochronous stability study was performed to ensure integrity of DNA fragment size for candidate `r rm_number`over a variety of storage.  Figure **XVZ** shows the design of the study, including the experimental treatments for each condition studied.  Two time courses and three temperature conditions (4°C, and 37°C) were used to mimic accelerated aging. The eight-week time course was started first, followed by a two-week time course.  The study was conducted such that all time courses ended on the same day.  A -20°C temperature control was used since this is the recommended storage condition of candidate `r rm_number`. 
 
+__TODO Revise Diagram TODO__
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.cap= "Stability study experimental design."}
 grid.raster(readPNG("stability.png"))
 ```
 
-The eight-week time course was started first, followed by a two-week time course.  The study was conducted such that all time courses ended on the same day.  A -20°C temperature control was used since this is the recommended storage condition of candidate `r rm_number`.  Triplicate vials were measured at each time point and condition to ensure there was enough replication to determine a qualitative difference.
+```{r echo = FALSE,child='rm_specific_stability_experimental_design.Rmd' }
+## Add text specific to rm regarding stability experiment
+```
 
-For handling conditions, triplicate vials were subjected to pipetting, vortexing and multiple freeze-thaw cycles.  For vials measuring the effects of pipetting, the entire volume of the tube (~50μL) was pipetted vigorously up and down 10 times.  The effects of vortexing were observed by vortexing the entire volume of the vial for 10 seconds.  To measure the effects of freeze/thaw cycles on DNA fragment size, one cycle of freeze/thaw was equivalent to the entire vial being placed at room temperature for one hour to completely thaw the liquid, then being placed back at -20°C overnight.  The study looked at the effects of 2 and 5 complete freeze/thaw cycles.
-
+__TODO Was this done for the microbial samples as well TODO__
 All temperature-based conditions were monitored with a data logger to track temperature, humidity and dew point over the entirety of the time-course.  All samples were stored in opaque boxes to minimize exposure the light.  At the conclusion of the time-course samples were placed in a -20°C freezer until measurements were made.
 
-### Analysis of Homogeneity and Stability Study
-To assess the homogeneity and stability of the DNA fragment size distribtion the proportion of DNA in a PFGE gel lane for each sample was determined for regions between ladder markers. These proportions were then compared using an ANOVA and a Tukey's HSD test was used to identify pairwise statistical differences. The gels were processed in a semi-automated manner were the parameters using the identify and label markers were manually set then used to process the gels in an automated manner. Prior to processing the gels were first manually cropped to remove regions of the gel to the left and right of the outer lanes and the gel wells used to load the gels. The gel wells were removed to eliminate potential biases due to presence of residual DNA in the wells. Finally the images were converted to grey scale prior to analysis. Code used to analyze the gels available at __%%TODO%%__.
+### Analysis of Stability Study
+To assess the stability of the DNA fragment size distribtion the proportion of DNA in a PFGE gel lane for each sample was determined for two regions between ladder markers. The high region is the proportion of DNA between the 48.5kb and 197kb markers and the low region between 9.24kb and 48.5kb markers. Treatment proportions were compared to controls using a T-test. The gels were processed using the R package peprrDnaStability ([www.github/nate-d-olson/pepr](http://www.github/nate-d-olson/pepr)). Prior to processing the gels were first manually cropped to remove regions of the gel to the left and right of the outer lanes. The `runfindMarkers` starts up an interactive application to define the parameters used in processing the gels (Figure **XYZ**). Croped and original gel images as well as the parameter set used to analyze the gels are available at __%%TODO%%__.
 
-#### Homogeneity Study Results
-__%%TODO%%__ DNA fragment homogeneity results
-
+__TODO Screenshot of Shiny App TODO__
 
 #### Stability Study Results
-```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Comparison of DNA proportions for size ranges between control and treatment."}
-#stability_tt_heatmap
+```{r echo = FALSE,child='rm_specific_stability_results.Rmd' }
+## Add text specific to rm regarding stability results
 ```
 
 \pagebreak
+
 
 # Appendix
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.cap= "Certificate of analysis provided by the reference material manufacturer."}
