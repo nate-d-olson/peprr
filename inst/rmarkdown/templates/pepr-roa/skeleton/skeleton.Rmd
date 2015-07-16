@@ -187,6 +187,7 @@ kable(homogeneity_sig_table(peprDB, rename_cols = TRUE),
 ```{r echo = FALSE,child='rm_specific_genomic_purity.Rmd' }
 ## Add text specific to rm regarding genomic purity.
 ```
+
 ```{r echo = FALSE, fig.align='center', fig.show = 'asis', fig.cap= "Proportion of reads from contaminant DNA.", warning=FALSE, message=FALSE}
 contam_counts_figure(peprDB, rm_genus)
 ```
@@ -203,19 +204,14 @@ contam_point_line_figure(peprDB, rm_genus)
 ### Description of Stability Study
 Vials of RM material were selected at random to assess stability of the DNA, in terms of the distribution of the molecular weight of the DNA.  For the stability study, a random number generator was used to determine the vials to measure.
 
-An isochronous stability study was performed to ensure integrity of DNA fragment size for candidate `r rm_number`over a variety of storage.  Figure **XVZ** shows the design of the study, including the experimental treatments for each condition studied.  Two time courses and three temperature conditions (4°C, and 37°C) were used to mimic accelerated aging. The eight-week time course was started first, followed by a two-week time course.  The study was conducted such that all time courses ended on the same day.  A -20°C temperature control was used since this is the recommended storage condition of candidate `r rm_number`. 
+An isochronous stability study was performed to ensure integrity of DNA fragment size for candidate `r rm_number`over a variety of storage.  Two time courses and temperature conditions (4°C, and 37°C) were used to mimic accelerated aging. The eight-week time course was started first, followed by a two-week time course.  The study was conducted such that all time courses ended on the same day.  A -20°C temperature control was used since this is the recommended storage condition of candidate `r rm_number`. 
 
-__TODO Revise Diagram TODO__
-```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.cap= "Stability study experimental design."}
-grid.raster(readPNG("stability.png"))
-```
+All temperature-based conditions were monitored with a data logger to track temperature, humidity and dew point over the entirety of the time-course.  All samples were stored in opaque boxes to minimize exposure the light.  At the conclusion of the time-course samples were placed in a -20°C freezer until measurements were made.
 
 ```{r echo = FALSE,child='rm_specific_stability_experimental_design.Rmd' }
 ## Add text specific to rm regarding stability experiment
 ```
 
-__TODO Was this done for the microbial samples as well TODO__
-All temperature-based conditions were monitored with a data logger to track temperature, humidity and dew point over the entirety of the time-course.  All samples were stored in opaque boxes to minimize exposure the light.  At the conclusion of the time-course samples were placed in a -20°C freezer until measurements were made.
 
 ### Analysis of Stability Study
 To assess the stability of the DNA fragment size distribtion the proportion of DNA in a PFGE gel lane for each sample was determined for two regions between ladder markers. The high region is the proportion of DNA between the 48.5kb and 197kb markers and the low region between 9.24kb and 48.5kb markers. Treatment proportions were compared to controls using a T-test. The gels were processed using the R package peprrDnaStability ([www.github/nate-d-olson/pepr](http://www.github/nate-d-olson/pepr)). Prior to processing the gels were first manually cropped to remove regions of the gel to the left and right of the outer lanes. The `runfindMarkers` starts up an interactive application to define the parameters used in processing the gels (Figure **XYZ**). Croped and original gel images as well as the parameter set used to analyze the gels are available at __%%TODO%%__.
