@@ -330,10 +330,9 @@ coverage_table <- function (db_con, platforms = c("miseq","pgm", "pacbio")){
     cov_df <- dplyr::data_frame()
     for(plat in platforms){
         tbl_name <- paste0("depth_", plat)
-        cov_df <- dplyr::tbl(src = db_con, from ="depth_miseq") %>%
-            dplyr::group_by(SAMPLE,REF) %>%
+        cov_df <- dplyr::tbl(src = db_con, from =tbl_name) %>%
+            dplyr::group_by(SAMPLE) %>%
             dplyr::summarise(COV = median(COV)) %>%
-            dplyr::rename(CHROM = REF) %>%
             dplyr::collect()  %>%
             dplyr::bind_rows(cov_df)
     }
