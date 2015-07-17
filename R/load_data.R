@@ -143,29 +143,6 @@ load_fastqc <- function(metrics_dir, db_con){
     }
 }
 
-## Coverage
-#' Per sample coverage
-#'
-#' @param db_con
-#' @param platforms
-#'
-#' @return adds coverage table to db
-#' @export
-#'
-#' @examples coverage_table(peprDB)
-coverage_table <- function (db_con, platforms = c("miseq","pgm")){
-  cov_df <- dplyr::data_frame()
-  for(plat in platforms){
-      tbl_name <- paste0("cb_", plat)
-      plat_cov <- dplyr::tbl(src = db_con, from =tbl_name) %>%
-          dplyr::group_by(SAMPLE) %>%
-          dplyr::summarise(COV = median(DP)) %>%
-          dplyr::collect()
-      cov_df <- dplyr::bind_rows(cov_df, plat_cov)
-  }
-  dplyr::copy_to(dest = db_con,df = cov_df,name = "coverage", temporary = FALSE)
-}
-
 #### Purity --------------------------------------------------------------------
 .parse_sam_report <- function(inputfile){
     # 'Parse pathoscope sam-report.tsv output files from pathoscope'
@@ -310,8 +287,58 @@ load_consensus <- function(consensus_dir, db_con, platforms = c("miseq", "pgm"))
     }
 }
 
+##### Depth ------------------------------------------------------
+.depth_tosql <- function(depth_file,tbl_name, db_con){
+    depth_df <- readr::read_tsv(depth_file) %>%
+        dplyr::mutate(POS = POS + 1)
+    dplyr::copy_to(dest = db_con,df = depth_df,
+                   name = tbl_name,
+                   temporary = FALSE)
 
+}
+#' Loads full genome depth output data into sqlite db
+#' @param depth_dir directory with depth results
+#' @param db_con database connection
+#' @return NULL
+#' @examples
+#' load_depth("/path/to/purity_dir", peprDB)
+load_depth <- function(depth_dir, db_con, platforms = c("miseq", "pgm", "pacbio")){
+    # error with input file for fread
+    for(i in platforms){
+        depth_file <- list.files(depth_dir,
+                                 pattern = paste0("*",i,".depth"),
+                                 full.names = TRUE)
 
+        depth_table <- paste0("depth_",i)
+        #if(!.check_db_table(depth_table, db_con)){
+        .depth_tosql(depth_file, depth_table, db_con)
+        #}
+    }
+}
+
+## Coverage
+#' Per sample coverage
+#'
+#' @param db_con
+#' @param platforms
+#'
+#' @return adds coverage table to db
+#' @export
+#'
+#' @examples coverage_table(peprDB)
+coverage_table <- function (db_con, platforms = c("miseq","pgm", "pacbio")){
+    cov_df <- dplyr::data_frame()
+    for(plat in platforms){
+        tbl_name <- paste0("depth_", plat)
+        cov_df <- dplyr::tbl(src = db_con, from ="depth_miseq") %>%
+            dplyr::group_by(SAMPLE,REF) %>%
+            dplyr::summarise(COV = median(COV)) %>%
+            dplyr::rename(CHROM = REF) %>%
+            dplyr::collect()  %>%
+            dplyr::bind_rows(cov_df)
+    }
+    dplyr::copy_to(dest = db_con,df = cov_df,name = "coverage", temporary = FALSE)
+}
 
 #### Homogeneity ---------------------------------------------------------------
 .parse_varscan_filename <- function(filename){
@@ -386,7 +413,8 @@ createPeprDB <- function(db_path,
     #commenting out fastqc data not used in summary table, issues with Pacbio data
     #load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
-    load_consensus(consensus_dir, db_con = peprDB)
+    load_depth(consensus_dir, db_con = peprDB)
+    load_consensus(consensus_dir, db_con = peprDB, platforms = c("miseq","pgm"))
     coverage_table(db_con = peprDB)
     load_purity(purity_dir, db_con = peprDB)
     load_pilon(pilon_dir, db_con = peprDB)
