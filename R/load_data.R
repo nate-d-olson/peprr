@@ -356,7 +356,9 @@ coverage_table <- function (db_con, platforms = c("miseq","pgm", "pacbio")){
         # added line to try and fix bug with df[1,] <- rep(NA, length(colnames(df)))
         return(df)
     }
+    df$ref <- as.character(df$ref)
     df$var <- as.character(df$var)
+    df$normal_gt <- as.character(df$normal_gt)
     ds_names <- .parse_varscan_filename(file)
     df$normal <- ds_names[1]; df$tumor <- ds_names[2]
     df
@@ -371,24 +373,23 @@ coverage_table <- function (db_con, platforms = c("miseq","pgm", "pacbio")){
 load_varscan <- function(homogeneity_dir, db_con){
     for(i in c("varscan-indel", "varscan-snp")){
         tbl_name <- stringr::str_replace(i, "-","_")
-        if(.check_db_table(tbl_name, db_con)){
-            return()
-        }
-        file_list <- list.files(homogeneity_dir,
-                                pattern = paste0("*", i, "*"),
-                                full.names = TRUE)
-        varscan_df <- purrr::map(.x = file_list, .f = .read_varscan) %>%
-                        dplyr::bind_rows()
-        if(nrow(varscan_df)== 0){
-            message(paste0("No rows in ",i," files, not added to database"))
-        } else {
-            dplyr::copy_to(dest = db_con,df = varscan_df,
-                            name = tbl_name,
-                            temporary = FALSE)
+        if(!.check_db_table(tbl_name, db_con)){
+
+            file_list <- list.files(homogeneity_dir,
+                                    pattern = paste0("*", i, "*"),
+                                    full.names = TRUE)
+            varscan_df <- purrr::map(.x = file_list, .f = .read_varscan) %>%
+                dplyr::bind_rows()
+            if(nrow(varscan_df)== 0){
+                message(paste0("No rows in ",i," files, not added to database"))
+            } else {
+                dplyr::copy_to(dest = db_con,df = varscan_df,
+                               name = tbl_name,
+                               temporary = FALSE)
+            }
         }
     }
 }
-
 ## Create db -------------------------------------------------------------------
 #' Generates sqlite database from pipeline output
 #' @param db_path path for database
