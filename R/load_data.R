@@ -356,7 +356,9 @@ coverage_table <- function (db_con, platforms = c("miseq","pgm", "pacbio")){
         # added line to try and fix bug with df[1,] <- rep(NA, length(colnames(df)))
         return(df)
     }
+    df$ref <- as.character(df$ref)
     df$var <- as.character(df$var)
+    df$normal_gt <- as.character(df$normal_gt)
     ds_names <- .parse_varscan_filename(file)
     df$normal <- ds_names[1]; df$tumor <- ds_names[2]
     df
