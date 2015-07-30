@@ -288,13 +288,21 @@ load_consensus <- function(consensus_dir, db_con, platforms = c("miseq", "pgm"))
 }
 
 ##### Depth ------------------------------------------------------
-.depth_tosql <- function(depth_file,tbl_name, db_con){
-    depth_df <- readr::read_tsv(depth_file) %>%
-        dplyr::mutate(POS = POS + 1)
-    dplyr::copy_to(dest = db_con,df = depth_df,
-                   name = tbl_name,
-                   temporary = FALSE)
+# Parse depth file names
+.parse_depth_name <- function(file_name){
+    name_split <- stringr::str_split(file_name,pattern = "_")[[1]]
+    name_file <- length(name_split)
+    stringr::str_split(name_split[length(name_split)],
+                       pattern = ".depth")[[1]][1]
+}
 
+.depth_to_df <- function(file_name){
+    #acc <- .parse_depth_name(file_name)
+    print(file_name)
+    depth_df <- data.table::fread(file_name) %>%
+        dplyr::rename(REF = V1, POS = V2, COV = V3)
+    depth_df$accession <- .parse_depth_name(file_name)
+    depth_df
 }
 #' Loads full genome depth output data into sqlite db
 #' @param depth_dir directory with depth results
@@ -302,17 +310,26 @@ load_consensus <- function(consensus_dir, db_con, platforms = c("miseq", "pgm"))
 #' @return NULL
 #' @examples
 #' load_depth("/path/to/purity_dir", peprDB)
-load_depth <- function(depth_dir, db_con, platforms = c("miseq", "pgm", "pacbio")){
+load_depth <- function(depth_dir, db_con){
     # error with input file for fread
-    for(i in platforms){
-        depth_file <- list.files(depth_dir,
-                                 pattern = paste0("*",i,".depth"),
-                                 full.names = TRUE)
+    if(!.check_db_table("seq_depth", db_con)){
 
-        depth_table <- paste0("depth_",i)
-        #if(!.check_db_table(depth_table, db_con)){
-        .depth_tosql(depth_file, depth_table, db_con)
-        #}
+        depth_df <- list.files(depth_dir,
+                                  pattern = ".depth",
+                                  full.names = TRUE) %>%
+                           plyr::ldply(.depth_to_df)
+
+#         depth_df_list <- list()
+#         for(i in depth_files){
+#             accession <- .parse_depth_name(i)
+#             depth_df <- data.table::fread(i) %>%
+#                 dplyr::rename(REF = V1, POS = V2, COV = V3) %>%
+#                 dplyr::mutate(accession = accession) %>%
+#                 dplyr::bind_rows(depth_df)
+#         }
+
+        dplyr::copy_to(dest = db_con,df = depth_df, name = "seq_depth",
+                       temporary = FALSE)
     }
 }
 
@@ -326,17 +343,11 @@ load_depth <- function(depth_dir, db_con, platforms = c("miseq", "pgm", "pacbio"
 #' @export
 #'
 #' @examples coverage_table(peprDB)
-coverage_table <- function (db_con, platforms = c("miseq","pgm", "pacbio")){
-    cov_df <- dplyr::data_frame()
-    for(plat in platforms){
-        tbl_name <- paste0("depth_", plat)
-        cov_df <- dplyr::tbl(src = db_con, from =tbl_name) %>%
-            dplyr::group_by(SAMPLE) %>%
-            dplyr::summarise(COV = median(COV)) %>%
-            dplyr::collect()  %>%
-            dplyr::bind_rows(cov_df)
-    }
-    dplyr::copy_to(dest = db_con,df = cov_df,name = "coverage", temporary = FALSE)
+coverage_table <- function (db_con){
+    dplyr::tbl(src = db_con, from = "seq_depth") %>%
+        dplyr::group_by(accession) %>%
+        dplyr::summarise(COV = median(COV)) %>%
+        dplyr::compute(name = "coverage", temporary = FALSE)
 }
 
 #### Homogeneity ---------------------------------------------------------------
