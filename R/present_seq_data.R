@@ -24,8 +24,10 @@ seq_summary_table <- function(db_con){
                                        x = accession))
 
     coverage_tbl <- dplyr::tbl(src = db_con, from="coverage") %>%
-        dplyr::rename("accession"=SAMPLE) %>%
         dplyr::collect()
+    if("SAMPLE" %in% colnames(coverage_tbl)){
+        coverage_tbl <- dplyr::rename(coverage_tbl, "accession"=SAMPLE)
+    }
 
     dplyr::tbl(src = db_con, from ="exp_design")  %>%
         dplyr::collect() %>% dplyr::full_join(seq_metrics) %>%
