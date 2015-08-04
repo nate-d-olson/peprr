@@ -169,7 +169,7 @@ pos_pur_gt97_one <- pur_dat_max %>% filter(max_pur > 0.97) %>% nrow()
 min_max_pur_position  <- paste0(as.character(round(min(pur_dat_max$max_pur), 2)*100),"%")
 ```
 
-The base purity metric is the number bases in reads aligned to a genome position that are in agreement with the reference base divided by the total number of reads aligned to the position.  Comparison of the purity values between for all positions in the genome for two orthogonal sequencing methods was used to differentiate between positions with low purity values due to platform specific biases and those due to true biological diversity (`r figr(label = "basePurityScatter", prefix = TRUE, link = TRUE, type = "Figure")`).  Out of $`r rm_genome_size/1000000`\times 10^6$ positions in the genome `r pos_pur_gt99_both` positions had purity values greater than 99\% for both short read sequencing platforms (`r figr(label = "purityContingencyTable", prefix = TRUE, link = TRUE, type = "Table")`).  `r pos_pur_gt99_one` and `r pos_pur_gt97_one` positions with purity values greater than 99% and 97% for one of the two platforms.  All positions had a purity value greater than `r min_max_pur_position` for at least one of the two platforms. Genome position distribution of the positions with low purity values for one of or both platforms in `r figr(label = "basePurityPosDistribution", prefix = TRUE, link = TRUE, type = "Figure")`. Positions with the low purity values for one platform and not another indicate a potential platform specific bias.  The reference base is identified using a third orthogonal sequencing method (PacBio RSII) and thus a low value for one of the two short reads sequencing platforms represents agreement between two of the three sequencing methods.
+The base purity metric is the number bases in reads aligned to a genome position that are in agreement with the reference base divided by the total number of reads aligned to the position.  Comparison of the purity values between for all positions in the genome for two orthogonal sequencing methods was used to differentiate between positions with low purity values due to platform specific biases and those due to true biological diversity (`r figr(label = "basePurityScatter", prefix = TRUE, link = TRUE, type = "Figure")`).  Out of $`r rm_genome_size/1000000`\times 10^6$ positions in the genome `r pos_pur_gt99_both` positions had purity values greater than 99\% for both short read sequencing platforms (`r figr(label = "purityContingencyTable", prefix = TRUE, link = TRUE, type = "Table")`).  `r pos_pur_gt99_one` and `r pos_pur_gt97_one` positions with purity values greater than 99% and 97% for one of the two platforms.  All positions had a purity value greater than `r min_max_pur_position` for at least one of the two platforms. Genome position distribution of the positions with low purity values for one of or both platforms in `r figr(label = "basePurityPosDistribution", prefix = TRUE, link = TRUE, type = "Figure")`. Purity values and number of bases in agreement with the reference and alternate base call for the 20 genome positions with the lowest average purity values for the two platforms (`r figr(label = "purityLowPosTable", prefix = TRUE, link = TRUE, type = "Table")`). Positions with the low purity values for one platform and not another indicate a potential platform specific bias.  The reference base is identified using a third orthogonal sequencing method (PacBio RSII) and thus a low value for one of the two short reads sequencing platforms represents agreement between two of the three sequencing methods.
 
 ```{r purityContingencyTable, anchor = "Table"}
 pur_dat_id %>% group_by(pur_group) %>% summarise(count = n()) %>% 
@@ -190,9 +190,15 @@ ggplot(pur_dat_id_filt %>% filter(CHROM == chrom_names[1])) +
     facet_wrap(~pur_group, ncol = 1, scales = "free_y") + theme_bw()
 ```
 
+```{r purityLowPosTable, echo =FALSE, anchor = "Table"}
+kable(low_purity_table(peprDB, rename_chroms = rename_chroms), 
+      row.names = FALSE,
+      caption = "Genome positions with lowest average purity values for MiSeq and PGM")
+```
+
 
 ##### Sequence homogeneity
-The genomic material homogeneity was assessed through a pairwise statistical analysis of the replicate MiSeq datasets using the varsan somatic variant caller (`r figr(label = "homogeneityTable", prefix = TRUE, link = TRUE, type = "Table")`).
+The genomic material homogeneity was assessed through a pairwise statistical analysis of the replicate MiSeq datasets using the varsan somatic variant caller (`r figr(label = "homogeneityTable", prefix = TRUE, link = TRUE, type = "Table")`). Comparison of individial dataset purity values for genome positions with purity values < 0.99 for MiSeq and PGM (`r figr(label = "homogeneityPointFig", prefix = TRUE, link = TRUE, type = "Figure")`).  Inhomogeneity is indicated by purity values for replicate vials (indicated by point color) consistently outside the distribution of purity values observed for other vials.  Differences in purity value distributions between the two platforms indicate platform specific biases.
 
 ```{r homogeneityTable, echo =FALSE, anchor = "Table"}
 kable(homogeneity_sig_table(peprDB, rename_cols = TRUE), 
@@ -200,14 +206,8 @@ kable(homogeneity_sig_table(peprDB, rename_cols = TRUE),
       caption = "Pairwise variant analysis results")
 ```
 
-<!--
-%%TODO%%
-Need to workout when this is included
--->
-
 ```{r homogeneityPointFig, fig.cap= "Among sample variation in purity values.", anchor = "Figure"}
-#not needed to support statements in report
-#homogeneity_point_line_figure(peprDB)
+homogeneity_point_line_figure(peprDB)
 ```
 
 #### Genomic Purity

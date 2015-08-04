@@ -20,10 +20,16 @@ exclusion_size <- 38
 vial_count <- (box_count-length(exclusion_box))*box_size+exclusion_size
 
 ## sequencing datasets
+## number of pacbio replicate datasets
 pb_replicate_number <- "three"
 
 ## optical mapping
+## restriction enzyme used in optical mapping
 restriction_enzyme <- "NcoI"
+
+## Chrom rename
+rename_chroms <- c("unitig_0|quiver|quiver|quiver" = "Chromosome",
+                 "unitig_1|quiver|quiver|quiver" = "Plasmid")
 
 ## stability metadata
 gel_dir <- "/Volumes/External-SSD/micro_rm/RM8376/stability_study/"

@@ -27,13 +27,29 @@ purity_scatter_plot <- function (db_con,
             ggplot2::labs(x = plat1_name, y = plat2_name) + ggplot2::theme_bw()
 }
 
-low_purity_table <- function(db_con){
+.replace_chrom_names <- function(df, chrom_names,chrom_var_name = "CHROM"){
+    df[[chrom_var_name]] <- plyr::revalue(df[[chrom_var_name]], chrom_names)
+    df
+#     df %>%
+#         dplyr::rowwise() %>%
+#         dplyr::mutate(CHROM = plyr::revalue(CHROM, chrom_names))
+}
+
+low_purity_table <- function(db_con, n = 20, rename_chroms = NULL){
     chrom_names <- .get_chrom_names(db_con)
+#     low_pur <- dplyr::tbl(db_con, "pur_join") %>%
+#         dplyr::filter(plat1 < 0.98 | plat2 < 0.98,
+#                       CHROM %in% chrom_names) %>%
+#         dplyr::collect() %>%
+#         dplyr::select(-plat1, -plat2)
     low_pur <- dplyr::tbl(db_con, "pur_join") %>%
-        dplyr::filter(plat1 < 0.98 | plat2 < 0.98,
+        dplyr::filter(plat1 < 0.99, plat2 < 0.99,
                       CHROM %in% chrom_names) %>%
-        dplyr::collect() %>%
-        dplyr::select(-plat1, -plat2)
+        dplyr::collect() %>% dplyr::group_by(CHROM, POS) %>%
+        dplyr::mutate(av_pur = (plat1 + plat2)/2) %>%
+        dplyr::ungroup() %>%
+        dplyr::top_n(n,-av_pur) %>%
+        dplyr::select(-plat1, -plat2, -av_pur)
 
     low_miseq <- dplyr::tbl(db_con, "pur_miseq_pooled") %>%
                     dplyr::filter(CHROM %in% low_pur$CHROM,
@@ -49,9 +65,12 @@ low_purity_table <- function(db_con){
 
     low_join <- dplyr::left_join(low_miseq, low_pgm, by = c("CHROM", "POS"))
 
+    if(!is.null(rename_chroms)){
+        low_join <- .replace_chrom_names(low_join, rename_chroms)
+    }
     names(low_join) <- names(low_join) %>%
-        stringr::str_replace_all("x","miseq") %>%
-        stringr::str_replace_all("y","pgm")
+        stringr::str_replace_all(".x","MiSeq ") %>%
+        stringr::str_replace_all(".y","PGM ")
     low_join
 }
 
