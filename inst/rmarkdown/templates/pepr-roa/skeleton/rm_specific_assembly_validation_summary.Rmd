@@ -1,9 +1,0 @@
-<!-- 
-Text specific to RM: genome assembly validation
-Include:
-general summary of results
-additional analysis if necessary
-discussion of ambiguous regions
---> 
-___SPECIFIC TO RM__ assembly validation results
-

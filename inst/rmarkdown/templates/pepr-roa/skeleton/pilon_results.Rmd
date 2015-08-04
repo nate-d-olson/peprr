@@ -1,0 +1,15 @@
+<!--
+If Pilon does not make any changes to the reference genome use the following line.
+-->
+Pilon assembly validation using MiSeq short read sequencing data supported the PacBio assembly.  
+
+<!--
+If Pilon does make changes comment out the line above and uncomment out the text below
+-->
+
+<!--
+Results from the assembly validation using MiSeq data are show in (`r figr(label = "pilonTable", prefix = TRUE, type = "Table")`)
+#```{r pilonTable, echo =FALSE, message=FALSE, warning=FALSE}
+#pilon_changes_table(peprDB) %>% kable()
+#```
+-->

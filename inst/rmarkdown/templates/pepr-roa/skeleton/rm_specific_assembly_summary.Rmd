@@ -1,5 +1,0 @@
-<!-- 
-Text specific to RM: summary of genome assembly
---> 
-___SPECIFIC TO RM__ summary of genome assembly
-

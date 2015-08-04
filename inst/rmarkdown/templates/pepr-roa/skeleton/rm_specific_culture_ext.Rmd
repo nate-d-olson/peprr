@@ -1,4 +1,0 @@
-<!-- 
-Text specific to RM: culturing and DNA extraction
---> 
-___SPECIFIC TO RM__ culture conditions and DNA extraction method

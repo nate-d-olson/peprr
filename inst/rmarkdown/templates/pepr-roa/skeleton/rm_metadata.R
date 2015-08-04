@@ -1,16 +1,31 @@
 # When using this template change for RM specific information
-rm_number <- "RM8375"
-rm_strain <- "Salmonella enterica subspecies enterica serovar Typhimurim strain LT2"
-rm_genus <- "Salmonella"
+rm_number <- "RM8376"
+rm_strain <- "Staphlyococcus aureus NGS100"
+rm_genus <- "Staphylococcus"
 rm_concentration <- 50
 rm_volume <- 60
 rm_mass <- round(rm_concentration*rm_volume/1000,0)
-rm_vial_number <- 1500
-strain_source <- "the Food and Drug Administration's Center for Food Safety, who originally received from The Institute for Genomic Research."
-rm_genome_size <- 4.8*10^6
-
-## DNA stability analysis
-#source("~/Desktop/dnaStability/stability_roa.Rdata")
+strain_source <- "Children's National Hostipal."
+rm_genome_size <- 2.8*10^6
 
 # Database location
-db_path <- "/Volumes/NDO_PROJECT/current_projects/micro_rm/micro_rm/pepr-data/MG001/Re.Order.CFSAN008157.HGAP_miseq.sqlite"
+## Requires a peprDB generated from the pepr pipeline
+db_path <- "/Volumes/External-SSD/micro_rm/pepr-data/MG002/MG002.sqlite"
+
+## Shipment info
+box_count <- 19
+box_size <- 81
+exclusion_box <- 13
+exclusion_size <- 38
+vial_count <- (box_count-length(exclusion_box))*box_size+exclusion_size
+
+## sequencing datasets
+pb_replicate_number <- "three"
+
+## optical mapping
+restriction_enzyme <- "NcoI"
+
+## stability metadata
+gel_dir <- "/Volumes/External-SSD/micro_rm/RM8376/stability_study/"
+gel_metadata <- paste0(gel_dir,"MG002_stability_metadata.csv")
+gel_data_dir <- paste0(gel_dir,"/images/cropped/")

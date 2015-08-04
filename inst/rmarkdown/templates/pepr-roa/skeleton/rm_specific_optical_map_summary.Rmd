@@ -1,5 +1,0 @@
-<!-- 
-Text specific to RM: summary of optical mapping results
---> 
-___SPECIFIC TO RM__ summary of optical mapping results
-

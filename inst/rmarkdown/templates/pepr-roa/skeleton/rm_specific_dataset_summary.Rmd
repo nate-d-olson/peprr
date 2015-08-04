@@ -1,5 +1,0 @@
-<!-- 
-Text specific to RM: summary of sequencing datasets
---> 
-___SPECIFIC TO RM__ summary of datasets
-

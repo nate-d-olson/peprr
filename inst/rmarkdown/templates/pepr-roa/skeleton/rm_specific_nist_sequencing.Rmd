@@ -1,6 +1,0 @@
-<!-- 
-Text specific to RM: nist sequencing measurements including library preparation methods
---> 
-___SPECIFIC TO RM__ nist sequencing measurements
-
-The reference materials were sequenced using the Illumina[^illumina] MiSeq and Ion Torrent[^iontorrent] PGM at NIST.  

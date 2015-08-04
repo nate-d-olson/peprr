@@ -1,5 +1,0 @@
-<!-- 
-Text specific to RM: information about strain selection and publically available reference genome seq for that strain.
---> 
-___SPECIFIC TO RM__ strain selection info
-

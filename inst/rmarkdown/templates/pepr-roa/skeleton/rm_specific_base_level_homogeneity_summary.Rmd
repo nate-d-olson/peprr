@@ -1,5 +1,0 @@
-<!-- 
-Text specific to RM: base level homogeneity results summary
---> 
-___SPECIFIC TO RM__ base level homogeneity results summary
-
