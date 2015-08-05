@@ -15,7 +15,7 @@
   dplyr::copy_to(db_con, vcf, name = tbl_name, temporary = FALSE,
                  indexes = list("CHROM","POS","SAMPLE"))
   ## removing from workspace
-  rm(vcf)
+  ##rm(vcf)
 }
 
 # Calculating purity and filtering indels
@@ -37,7 +37,7 @@
            Alt = Alt_For + Alt_Rev,
            Pur = Ref/(Ref+ Alt))
   dplyr::copy_to(db_con, vcf_dp4, name=tbl_name,temporary = FALSE, indexes = list("CHROM","POS","SAMPLE"))
-  rm(vcf_dp4)
+  ## rm(vcf_dp4)
 }
 
 # Generating purity by platform summary
@@ -63,5 +63,5 @@
   # may want to change to outer_join later
   dplyr::inner_join(plat1_tbl, plat2_tbl) %>%
       dplyr::compute(name="pur_join", temporary = FALSE)
-  rm(plat1_tbl, plat2_tbl)
+  ##rm(plat1_tbl, plat2_tbl)
 }

@@ -267,6 +267,8 @@ load_consensus <- function(consensus_dir, db_con, platforms = c("miseq", "pgm"))
         if(!.check_db_table(cb_table, db_con)){
             .cbtsv_tosql(tsv_file, db_con,cb_table)
         }
+        # reducing memory requrements after loading
+        rm(tsv_file)
 
         pur_table <- paste0("pur_",i)
         if(!.check_db_table(pur_table, db_con)){
