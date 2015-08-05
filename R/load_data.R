@@ -426,7 +426,7 @@ createPeprDB <- function(db_path,
     #commenting out fastqc data not used in summary table, issues with Pacbio data
     #load_fastqc(qc_stats_dir, db_con = peprDB)
     load_varscan(homogeneity_dir, db_con = peprDB)
-    load_depth(consensus_dir, db_con = peprDB)
+    load_depth(qc_stats_dir, db_con = peprDB)
     load_consensus(consensus_dir, db_con = peprDB, platforms = c("miseq","pgm"))
     coverage_table(db_con = peprDB)
     load_purity(purity_dir, db_con = peprDB)
