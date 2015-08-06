@@ -45,7 +45,14 @@ seq_summary_table <- function(db_con){
 #' @param db_con peprDB connection
 #' @return NULL
 pilon_changes_table <- function(db_con){
-    dplyr::tbl(src = db_con, from="pilon_changes")  %>%
-        dplyr::collect()
+    changes_tbl <- dplyr::tbl(src = db_con, from="pilon_changes")  %>%
+                        dplyr::collect() %>%
+                        dplyr::select(chrom_pilon, coord_ref,
+                                      seq_ref, coord_pilon, seq_pilon)
+    if(!is.null(rename_chroms)){
+        changes_tbl <- .replace_chrom_names(changes_tbl,
+                            rename_chroms,chrom_var_name = "chrom_pilon")
+    }
+    changes_tbl
 }
 
