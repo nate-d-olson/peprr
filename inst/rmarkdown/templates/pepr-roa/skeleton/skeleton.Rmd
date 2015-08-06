@@ -206,7 +206,7 @@ kable(homogeneity_sig_table(peprDB, rename_cols = TRUE),
       caption = "Pairwise variant analysis results")
 ```
 
-```{r homogeneityPointFig, fig.cap= "Among sample variation in purity values.", anchor = "Figure"}
+```{r homogeneityPointFig, fig.align = "center", fig.cap= "Among sample variation in purity values.", anchor = "Figure"}
 homogeneity_point_line_figure(peprDB)
 ```
 
