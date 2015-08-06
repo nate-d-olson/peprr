@@ -221,8 +221,6 @@ load_pilon <- function(pilon_dir, db_con){
     }else if(length(readLines(changes_file)) < 1){
             warning("no changes in pilon changes file")
     }else{
-        print(changes_file)
-        print("else...")
         changes_col_names <- c("chrom_ref", "chrom_pilon","seq_ref","seq_pilon")
         #try using fill = TRUE to fix issue with unequal number of columns in rows
         changes_df <- read.table(file = changes_file, header = FALSE, sep = " ",
@@ -349,6 +347,9 @@ load_depth <- function(depth_dir, db_con){
 #'
 #' @examples coverage_table(peprDB)
 coverage_table <- function (db_con){
+    if(.check_db_table("coverage", db_con)){
+        return()
+    }
     dplyr::tbl(src = db_con, from = "seq_depth") %>%
         dplyr::group_by(accession) %>%
         dplyr::summarise(COV = median(COV)) %>%
