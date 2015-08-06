@@ -48,7 +48,16 @@ pilon_changes_table <- function(db_con){
     changes_tbl <- dplyr::tbl(src = db_con, from="pilon_changes")  %>%
                         dplyr::collect() %>%
                         dplyr::select(chrom_pilon, coord_ref,
-                                      seq_ref, coord_pilon, seq_pilon)
+                                      seq_ref, coord_pilon, seq_pilon) %>%
+                        dplyr::rowwise() %>%
+                        dplyr::mutate(seq_ref = ifelse(nchar(seq_ref) > 10,
+                                                       paste0(nchar(seq_ref),
+                                                              "bp deletion"),
+                                                       seq_ref),
+                                      seq_pilon = ifelse(nchar(seq_pilon) > 10,
+                                                         paste0(nchar(seq_pilon),
+                                                                "bp insertion"),
+                                                         seq_pilon))
     if(!is.null(rename_chroms)){
         changes_tbl <- .replace_chrom_names(changes_tbl,
                             rename_chroms,chrom_var_name = "chrom_pilon")

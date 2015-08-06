@@ -226,8 +226,10 @@ load_pilon <- function(pilon_dir, db_con){
         changes_df <- read.table(file = changes_file, header = FALSE, sep = " ",
                                  col.names = changes_col_names,
                                  stringsAsFactors = FALSE) %>%
-            tidyr::separate(col = chrom_ref, into = c("chrom_ref","coord_ref"), sep = ":") %>%
-            tidyr::separate(col = chrom_pilon, into = c("chrom_pilon","coord_pilon"), sep = ":")
+            tidyr::separate(col = chrom_ref,
+                            into = c("chrom_ref","coord_ref"), sep = ":") %>%
+            tidyr::separate(col = chrom_pilon,
+                            into = c("chrom_pilon","coord_pilon"), sep = ":")
         dplyr::copy_to(dest = db_con,df = changes_df,
                        name = "pilon_changes", temporary = FALSE)
     }
