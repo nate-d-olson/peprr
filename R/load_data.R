@@ -26,7 +26,10 @@ init_peprDB <- function(data_dir = NULL, db_path = NULL, create = TRUE){
 # check to see if table already in databse if so, skips step and prints warning
 # message
 .check_db_table <- function(table, db_con){
-    if(table %in% dplyr::src_tbls(db_con)){
+    db_tables <- dplyr::src_tbls(db_con)
+    if(is.null(db_tables)){
+        return(FALSE)
+    }else if(table %in% db_tables){
         warning(paste0(table, " table already in database skip loading"))
         return(TRUE)
     }
@@ -215,16 +218,16 @@ load_pilon <- function(pilon_dir, db_con){
         warning("more than one pilon changes file in directory skipping loading into database")
     }else if(length(as.vector(changes_file))==0){
         warning("no changes file in pilon directory")
-    }else {
+    }else if(length(readLines(changes_file)) < 1){
+            warning("no changes in pilon changes file")
+    }else{
+        print(changes_file)
+        print("else...")
         changes_col_names <- c("chrom_ref", "chrom_pilon","seq_ref","seq_pilon")
         #try using fill = TRUE to fix issue with unequal number of columns in rows
         changes_df <- read.table(file = changes_file, header = FALSE, sep = " ",
                                  col.names = changes_col_names,
                                  stringsAsFactors = FALSE)
-        if(nrow(changes_df)== 0){
-            warning("no changes in pilon changes file")
-            return()
-        }
         changes_df %>%
             tidyr::separate(col = chrom_ref, into = c("chrom_ref","coord_ref"), sep = ":") %>%
             tidyr::separate(col = chrom_pilon, into = c("chrom_pilon","coord_pilon"), sep = ":")
