@@ -119,9 +119,10 @@ low_pur_metrics_figure <- function(db_con, n = 5){
 homogeneity_point_line_figure <- function(db_con, n = 5, platforms = c("miseq","pgm")){
     chrom_names <- .get_chrom_names(db_con)
     low_pur <- dplyr::tbl(db_con, "pur_join") %>%
-        dplyr::filter(plat1 < 0.99, plat2 < 0.99,
-                      CHROM %in% chrom_names) %>%
-        dplyr::collect() %>% dplyr::group_by(CHROM, POS) %>%
+        dplyr::filter(plat1 < 0.99, plat2 < 0.99) %>%
+        dplyr::collect() %>%
+        dplyr::filter(CHROM %in% chrom_names) %>%
+        dplyr::group_by(CHROM, POS) %>%
         dplyr::mutate(av_pur = (plat1 + plat2)/2) %>%
         dplyr::ungroup() %>%
         dplyr::top_n(n,-av_pur) %>%
