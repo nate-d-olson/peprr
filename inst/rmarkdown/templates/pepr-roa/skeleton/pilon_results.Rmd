@@ -10,6 +10,6 @@ If Pilon does make changes comment out the line above and uncomment out the text
 <!--
 Results from the assembly validation using MiSeq data are show in (`r figr(label = "pilonTable", prefix = TRUE, type = "Table")`)
 #```{r pilonTable, echo =FALSE, message=FALSE, warning=FALSE}
-#pilon_changes_table(peprDB) %>% kable()
+#pilon_changes_table(peprDB) %>% kable(row.names = NA, caption = "Modifications made to genome assembly by Pilon. A '.' in the pilon_seq column indicates a deletion and a '.' in the ref_seq column indicates a insertion")
 #```
 -->
