@@ -25,7 +25,7 @@ contam_counts_figure <- function(db_con, genus){
         dplyr::group_by(accession, plat, vial) %>%
         dplyr::summarize(contam_prop = sum(Final.Guess))
     ggplot2::ggplot(df) + ggplot2::geom_boxplot(ggplot2::aes(x = plat,
-                                                             y = contam_read,
+                                                             y = contam_prop,
                                                              color = plat)) +
         ggplot2::theme_bw() +
         ggplot2::labs(x = "Sequencing Platform",y = "Proportion Total Contaminants") +
