@@ -21,15 +21,14 @@
 #' @return NULL
 contam_counts_figure <- function(db_con, genus){
     df <- .genomic_purity_df(db_con, genus) %>%
-        dplyr::filter(Contam == FALSE) %>%
+        dplyr::filter(Contam == TRUE) %>%
         dplyr::group_by(accession, plat, vial) %>%
-        dplyr::summarize(total_prop = sum(Final.Guess),
-                         prop_read = 1000000 *(1-total_prop))
+        dplyr::summarize(contam_prop = sum(Final.Guess))
     ggplot2::ggplot(df) + ggplot2::geom_boxplot(ggplot2::aes(x = plat,
-                                                             y = prop_read,
+                                                             y = contam_read,
                                                              color = plat)) +
         ggplot2::theme_bw() +
-        ggplot2::labs(x = "Sequencing Platform",y = "Contaminants/Million Reads") +
+        ggplot2::labs(x = "Sequencing Platform",y = "Proportion Total Contaminants") +
         ggplot2::theme(legend.position = "none")
 }
 
