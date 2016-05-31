@@ -16,5 +16,6 @@ Imports: dplyr,
     yaml,
     reshape2,
     ggplot2,
+    readr,
     RSQLite
 Suggests: testthat
